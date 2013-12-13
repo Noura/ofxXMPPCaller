@@ -42,11 +42,14 @@ void ofxXMPPCaller::draw() {
     if (unlaunchCanvas) unlaunchCanvas->draw();
 }
 
+/// Sets the UI to the "closed" state, ready to be launched.
+/// The dummy argument is so that this function can be triggered as an event callback.
 void ofxXMPPCaller::unlaunch(bool & e) {
     deletes();
     float launchW = 75;
     float launchH = 40;
     float margin = 3;
+    // launchCanvas and launchButton will launch or "open" the chat UI
     launchCanvas = new ofxUICanvas(x, y, launchW, launchH);
     launchButton = new CustomEventLabelButton(launchButtonLabel, launchW - 2.0 * margin, launchH - 2.0 * margin, x, y, OFX_UI_FONT_SMALL_SIZE);
     launchCanvas->addWidget(launchButton);
@@ -57,8 +60,12 @@ void ofxXMPPCaller::unlaunch(bool & e) {
     launchCanvas->setColorBack(dark);
 }
 
+/// Sets the UI to the "open" state, showing contacts to chat with.
+/// The dummy argument is so that this function can be triggered as an event callback.
 void ofxXMPPCaller::launch(bool & e) {
     deletes();
+    
+    // gui is the chat UI
     gui = new CallingGUI(x, y, &appState, &xmpp);
     gui->setup();
     
@@ -67,6 +74,8 @@ void ofxXMPPCaller::launch(bool & e) {
     float margin = 3;
     float unlaunchX = ofGetWidth() - unlaunchW;
     float unlaunchY = y;
+    
+    // unlaunchCanvas and unlaunchButton will unlaunch or "close" the chat UI
     unlaunchCanvas = new ofxUICanvas(unlaunchX, unlaunchY, unlaunchW, unlaunchH);
     unlaunchButton = new CustomEventLabelButton("Close", unlaunchW - 2.0 * margin, unlaunchH - 2.0 * margin, 0, 0, OFX_UI_FONT_SMALL_SIZE);
     unlaunchCanvas->addWidget(unlaunchButton);
