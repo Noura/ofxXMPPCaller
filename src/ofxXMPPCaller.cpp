@@ -16,9 +16,9 @@ ofxXMPPCaller::ofxXMPPCaller(float _x, float _y, string server, string user, str
 , unlaunchCanvas(NULL)
 , unlaunchButton(NULL) {
     appState.setCallCapability(_capability);
-    //xmpp.setShow(ofxXMPPShowAvailable);
-    //xmpp.connect(server, user, password);
-    //xmpp.setCapabilities(appState.callCapability);
+    xmpp.setShow(ofxXMPPShowAvailable);
+    xmpp.connect(server, user, password);
+    xmpp.setCapabilities(appState.callCapability);
 }
 
 void ofxXMPPCaller::setup() {
@@ -57,7 +57,7 @@ void ofxXMPPCaller::unlaunch(bool & e) {
     launchCanvas->setColorBack(dark);
 }
 
-void ofxXMPPCaller::launch(bool & e) {/*
+void ofxXMPPCaller::launch(bool & e) {
     deletes();
     gui = new CallingGUI(x, y, &appState, &xmpp);
     gui->setup();
@@ -75,7 +75,7 @@ void ofxXMPPCaller::launch(bool & e) {/*
     
     ofColor dark(100, 100, 100);
     unlaunchCanvas->setColorBack(dark);
-*/}
+}
 
 void ofxXMPPCaller::deletes() {
     if (launchCanvas) {

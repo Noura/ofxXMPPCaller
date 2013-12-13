@@ -50,7 +50,7 @@ public:
     void onConnectionStateChanged(ofxXMPPConnectionState & connectionState);
     
     SharedStateBundle appState;
-    //ofxXMPP xmpp;
+    ofxXMPP xmpp;
     
 protected:
     
