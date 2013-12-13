@@ -34,5 +34,7 @@
 	<string>0502</string>
 	<key>DTXcodeBuild</key>
 	<string>5A3005</string>
+	<key>NSZombieEnabled</key>
+	<true/>
 </dict>
 </plist>
