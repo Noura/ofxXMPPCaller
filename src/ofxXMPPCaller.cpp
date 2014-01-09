@@ -15,7 +15,7 @@ ofxXMPPCaller::ofxXMPPCaller(float _x, float _y, string server, string user, str
 , launchButton(NULL)
 , unlaunchCanvas(NULL)
 , unlaunchButton(NULL) {
-    //appState.setCallCapability(_capability);
+    appState.setCallCapability(_capability);
     xmpp.setShow(ofxXMPPShowAvailable);
     xmpp.connect(server, user, password);
     xmpp.setCapabilities(appState.callCapability);
