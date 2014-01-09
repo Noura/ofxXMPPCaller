@@ -1,14 +1,15 @@
 #include "testApp.h"
-
-testApp::testApp() :
-xmppCaller(NULL) { }
+#include <assert.h>
 
 void testApp::setup(){
     ofXml settings;
-	settings.load("settings.xml");
+	bool test = settings.load("settings.xml");
+    assert(test);
+    
 	string server = settings.getValue("server");
 	string user = settings.getValue("user");
 	string pwd = settings.getValue("pwd");
+    
     xmppCaller = new ofxXMPPCaller(0, 0, server, user, pwd, "Launch", "telekinect");
     xmppCaller->setup();
 }

@@ -1,0 +1,7 @@
+error messages
+
+exampleDebug(26046,0xac203a28) malloc: *** error for object 0x2482fb4: incorrect checksum for freed object - object was probably modified after being freed.
+*** set a breakpoint in malloc_error_break to debug
+
+latest commit on of
+8a08e1497ca12dc13939f4c163848d0e1e1cd274
