@@ -74,9 +74,18 @@ void FriendsView::update() {
     
     for (vector<ofxXMPPUser>::iterator it = to_add_copy.begin(); it < to_add_copy.end(); it++) {
         ofxXMPPUser user = (*it);
+        list<ofxUIWidget*> * friends = canvas->getWidgetList();
         if (FriendView::isValidFriend(user)) {
-            FriendView * f = new FriendView(user, w - scroll_w, appState, xmpp);
-            canvas->addWidgetToList(f, false);
+            bool already_there = false;
+            for (list<ofxUIWidget*>::iterator it = friends->begin(); it != friends->end(); it++) {
+                FriendView * f = (FriendView*)(*it);
+                if (f->user.userName == user.userName)
+                    already_there = true;
+            }
+            if (!already_there) {
+                FriendView * f = new FriendView(user, w - scroll_w, appState, xmpp);
+                canvas->addWidgetToList(f, false);
+            }
         }
     }
     
