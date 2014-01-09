@@ -21,7 +21,6 @@ YesNoDialog::~YesNoDialog() {
     ofRemoveListener(yesButton->mousePressed, this, &YesNoDialog::Yes);
     ofRemoveListener(noButton->mousePressed, this, &YesNoDialog::No);
     delete canvas;
-    delete prompt;
 }
 
 void YesNoDialog::setup() {
