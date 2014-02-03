@@ -1,3 +1,5 @@
 *.DS_Store
 
 example/bin/data/settings.xml
+
+example/example.xcodeproj/project.xcworkspace/xcuserdata/*.xcuserdatad/UserInterfaceState.xcuserstate
