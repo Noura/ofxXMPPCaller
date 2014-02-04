@@ -63,6 +63,8 @@ protected:
     CustomEventLabelButton * launchButton, * unlaunchButton;
     string launchButtonLabel;
     
+    ofxUICanvas * sharedFonts;
+    
 };
 
 #endif /* defined(OFX_XMPP_CALLER_H_) */

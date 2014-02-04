@@ -20,7 +20,7 @@
 class CustomEventLabelButton : public ofxUILabelButton {
 public:
     
-    CustomEventLabelButton(string _label, float w, float h, float x, float y, int size_ = OFX_UI_FONT_MEDIUM_SIZE);
+    CustomEventLabelButton(string _label, float w, float h, float x, float y, int size_ = OFX_UI_FONT_MEDIUM);
     
     ~CustomEventLabelButton();
     

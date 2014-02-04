@@ -22,7 +22,7 @@ class FriendsView {
     
 public:
     
-    FriendsView(float _x, float _y, float _w, float _h, SharedStateBundle * _appState, ofxXMPP * _xmpp);
+    FriendsView(float _x, float _y, float _w, float _h, SharedStateBundle * _appState, ofxXMPP * _xmpp, ofxUICanvas * _sharedFonts);
     ~FriendsView();
 
     void addFriendView(ofxXMPPUser & user);
@@ -38,9 +38,11 @@ private:
     
     float x, y, w, h, legend_h;
     float scroll_w = 30;
-    ofxUIScrollbarCanvas * canvas;
+    ofxUIDynamicListVerticalScrollbarCanvas * canvas;
     deque<ofxXMPPUser> to_remove;
     deque<ofxXMPPUser> to_add;
+    
+    ofxUICanvas * sharedFonts;
 };
 
 #endif

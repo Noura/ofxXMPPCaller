@@ -47,7 +47,7 @@ private:
     
     float x, y, w, h, canvas_h, title_h;
     string title;
-    ofxUIScrollbarCanvas * messagesCanvas;
+    ofxUIDynamicListVerticalScrollbarCanvas * messagesCanvas;
     ofxUICanvas * composingCanvas;
     ofxUITextInput * composingMsg;
     ofxUICanvas * callButtonCanvas;

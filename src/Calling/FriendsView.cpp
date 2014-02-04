@@ -10,7 +10,7 @@
 
 #include "FriendsView.h"
 
-FriendsView::FriendsView(float _x, float _y, float _w, float _h, SharedStateBundle * _appState, ofxXMPP * _xmpp)
+FriendsView::FriendsView(float _x, float _y, float _w, float _h, SharedStateBundle * _appState, ofxXMPP * _xmpp, ofxUICanvas * _sharedFonts)
 : x(_x)
 , y(_y)
 , w(_w)
@@ -18,6 +18,7 @@ FriendsView::FriendsView(float _x, float _y, float _w, float _h, SharedStateBund
 , legend_h(100.0)
 , appState(_appState)
 , xmpp(_xmpp)
+, sharedFonts(_sharedFonts)
 , canvas(NULL) {
 }
 
@@ -28,7 +29,7 @@ FriendsView::~FriendsView() {
 }
 
 void FriendsView::setup() {
-    canvas = new ofxUIScrollbarCanvas(x, y, w, h - legend_h);
+    canvas = new ofxUIDynamicListVerticalScrollbarCanvas(x, y, w, h - legend_h, sharedFonts);
     canvas->setSnapping(false);
     canvas->setScrollbarImage("GUI/scrollbar.png");
     

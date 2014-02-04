@@ -19,6 +19,9 @@ ofxXMPPCaller::ofxXMPPCaller(float _x, float _y, string server, string user, str
     xmpp.setShow(ofxXMPPShowAvailable);
     xmpp.connect(server, user, password);
     xmpp.setCapabilities(appState.callCapability);
+    
+    sharedFonts = new ofxUICanvas();
+    sharedFonts->setFont("GUI/NewMediaFett.ttf");
 }
 
 void ofxXMPPCaller::setup() {
@@ -28,6 +31,7 @@ void ofxXMPPCaller::setup() {
 
 ofxXMPPCaller::~ofxXMPPCaller() {
     deletes();
+    delete sharedFonts;
 }
 
 void ofxXMPPCaller::update() {
@@ -50,8 +54,8 @@ void ofxXMPPCaller::unlaunch(bool & e) {
     float launchH = 40;
     float margin = 3;
     // launchCanvas and launchButton will launch or "open" the chat UI
-    launchCanvas = new ofxUICanvas(x, y, launchW, launchH);
-    launchButton = new CustomEventLabelButton(launchButtonLabel, launchW - 2.0 * margin, launchH - 2.0 * margin, x, y, OFX_UI_FONT_SMALL_SIZE);
+    launchCanvas = new ofxUICanvas(x, y, launchW, launchH, sharedFonts);
+    launchButton = new CustomEventLabelButton(launchButtonLabel, launchW - 2.0 * margin, launchH - 2.0 * margin, x, y, OFX_UI_FONT_SMALL);
     launchCanvas->addWidget(launchButton);
     
     ofAddListener(launchButton->mousePressed, this, &ofxXMPPCaller::launch);
@@ -66,7 +70,7 @@ void ofxXMPPCaller::launch(bool & e) {
     deletes();
     
     // gui is the chat UI
-    gui = new CallingGUI(x, y, &appState, &xmpp);
+    gui = new CallingGUI(x, y, &appState, &xmpp, sharedFonts);
     gui->setup();
     
     float unlaunchW = 75;
@@ -76,7 +80,7 @@ void ofxXMPPCaller::launch(bool & e) {
     float unlaunchY = y;
     
     // unlaunchCanvas and unlaunchButton will unlaunch or "close" the chat UI
-    unlaunchCanvas = new ofxUICanvas(unlaunchX, unlaunchY, unlaunchW, unlaunchH);
+    unlaunchCanvas = new ofxUICanvas(unlaunchX, unlaunchY, unlaunchW, unlaunchH, sharedFonts);
     unlaunchButton = new CustomEventLabelButton("Close", unlaunchW - 2.0 * margin, unlaunchH - 2.0 * margin, 0, 0, OFX_UI_FONT_SMALL_SIZE);
     unlaunchCanvas->addWidget(unlaunchButton);
     

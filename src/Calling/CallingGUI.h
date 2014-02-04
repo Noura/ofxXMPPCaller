@@ -23,7 +23,7 @@ class CallingGUI {
 
 public:
 
-    CallingGUI(float _x, float _y, SharedStateBundle * _appState, ofxXMPP * _xmpp);
+    CallingGUI(float _x, float _y, SharedStateBundle * _appState, ofxXMPP * _xmpp, ofxUICanvas * _sharedFonts);
     ~CallingGUI();
     
     void setup();
@@ -51,6 +51,8 @@ protected:
     YesNoDialog * callingDialog;
     ofxXMPPMessage tempMsg;
     bool addTempMsg;
+    
+    ofxUICanvas * sharedFonts;
     
 };
 
