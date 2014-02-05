@@ -28,7 +28,7 @@ MessagesView::MessagesView(float _x, float _y, float _w, float _h, SharedStateBu
     canvas_h = h * CONVERSATION_PERCENT_HEIGHT/100.0 - title_h;
 }
 
-MessagesView::~MessagesView() {/*
+MessagesView::~MessagesView() {
     if (model)
         ofRemoveListener(model->newMessage, this, &MessagesView::addMessage);
     if (composingMsg)
@@ -36,14 +36,14 @@ MessagesView::~MessagesView() {/*
     delete messagesCanvas;
     delete composingCanvas;
     delete callButtonCanvas;
-*/}
+}
 
-void MessagesView::setModel(Messages * _model) {/*
+void MessagesView::setModel(Messages * _model) {
     model = _model;
     ofAddListener(model->newMessage, this, &MessagesView::addMessage);
-*/}
+}
 
-void MessagesView::setup() {/*
+void MessagesView::setup() {
     ofxXMPPUser user = appState->chatContact;
 
     title = FriendView::formatUserName(user.userName);
@@ -74,30 +74,30 @@ void MessagesView::setup() {/*
     composingCanvas->addWidgetDown(composingMsg);
     composingMsg->focus();
     ofAddListener(composingMsg->inputSubmitted, this, &MessagesView::onNewLocalMessage);
-*/}
+}
 
-void MessagesView::onNewLocalMessage(string &msg) {/*
+void MessagesView::onNewLocalMessage(string &msg) {
     ofNotifyEvent(newLocalMessage, msg, this);
-*/}
+}
 
-void MessagesView::addMessage(ofxXMPPMessage &msg) {/*
+void MessagesView::addMessage(ofxXMPPMessage &msg) {
     string text = formatMessage(msg);
     ofxUITextArea * messageView = new ofxUITextArea(text, text, w - OFX_UI_MIN_SCROLLBAR_W - 2.0);
 
     messagesCanvas->addWidgetToList(messageView);
     messagesCanvas->scrollToBottom();
-*/}
+}
 
-string MessagesView::formatMessage(ofxXMPPMessage msg) {/*
+string MessagesView::formatMessage(ofxXMPPMessage msg) {
     string from = msg.from.substr();
     int i = from.find('@');
     if (i < from.size()) {
         from = from.substr(0, i);
     }
     return from + ": " + msg.body;
-*/}
+}
 
-void MessagesView::draw() {/*
+void MessagesView::draw() {
     ofPushStyle();
     ofSetColor(0);
     ofDrawBitmapString("Chat with " + title, x + 3.0, y + title_h - 3.0);
@@ -115,9 +115,9 @@ void MessagesView::draw() {/*
             ofDrawBitmapString(friends[calling].userName + ": ...", ofGetWidth()-280, 20 + i*20 + j*30);
         }
     }*/
-/**/}
+}
 
-void MessagesView::update() {/*
+void MessagesView::update() {
     messagesCanvas->update();
     //composingCanvas->update();
-*/}
+}
