@@ -74,9 +74,9 @@ void MessagesView::setup() {
     }
 
     composingCanvas = new ofxUICanvas(x, y + title_h + canvas_h, w, h - title_h - canvas_h);
-    composingMsg = new ofxUITextInput("composing", "", w, h - title_h - canvas_h, x, y + title_h + canvas_h);
+    float margin = OFX_UI_GLOBAL_PADDING + OFX_UI_GLOBAL_WIDGET_SPACING;
+    composingMsg = new ofxUITextInput("composing", "", w - 2.0 * margin + 4.0, h - title_h - canvas_h - 2.0 * margin + 4.0, margin, margin);
     composingCanvas->addWidgetDown(composingMsg);
-    
     composingMsg->setFocus(true);
     
     /* TODO get input events again
