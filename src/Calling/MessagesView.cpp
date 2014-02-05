@@ -31,8 +31,10 @@ MessagesView::MessagesView(float _x, float _y, float _w, float _h, SharedStateBu
 MessagesView::~MessagesView() {
     if (model)
         ofRemoveListener(model->newMessage, this, &MessagesView::addMessage);
+
     if (composingMsg)
         ofRemoveListener(composingMsg->inputSubmitted, this, &MessagesView::onNewLocalMessage);
+    
     delete messagesCanvas;
     delete composingCanvas;
     delete callButtonCanvas;
@@ -63,8 +65,8 @@ void MessagesView::setup() {
     }
     
     messagesCanvas = new ofxUIDynamicListVerticalScrollbarCanvas(x, y + title_h, w, canvas_h);
-    messagesCanvas->setSnapping(false);
-    messagesCanvas->setScrollbarImage("GUI/scrollbar.png");
+
+    messagesCanvas->getScrollbar()->setImage("GUI/scrollbar.png");
     for (int i = 0; i < model->messages.size(); i++ ) {
         addMessage(model->messages[i]);
     }
@@ -84,7 +86,7 @@ void MessagesView::addMessage(ofxXMPPMessage &msg) {
     string text = formatMessage(msg);
     ofxUITextArea * messageView = new ofxUITextArea(text, text, w - OFX_UI_MIN_SCROLLBAR_W - 2.0);
 
-    messagesCanvas->addWidgetToList(messageView);
+    messagesCanvas->addWidget(messageView);
     messagesCanvas->scrollToBottom();
 }
 
