@@ -30,8 +30,7 @@ FriendsView::~FriendsView() {
 
 void FriendsView::setup() {
     canvas = new ofxUIDynamicListVerticalScrollbarCanvas(x, y, w, h - legend_h, sharedFonts);
-    canvas->setSnapping(false);
-    canvas->setScrollbarImage("GUI/scrollbar.png");
+    canvas->getScrollbar()->setImage("GUI/scrollbar.png");
     
     const vector<ofxXMPPUser> & friends = xmpp->getFriends();
     for (int i = 0; i < friends.size(); i++) {
@@ -85,7 +84,7 @@ void FriendsView::update() {
             }
             if (!already_there) {
                 FriendView * f = new FriendView(user, w - scroll_w, appState, xmpp);
-                canvas->addWidgetToList(f, false);
+                canvas->addWidget(f, false);
             }
         }
     }
@@ -96,7 +95,7 @@ void FriendsView::update() {
         for (list<ofxUIWidget*>::iterator it = friends->begin(); it != friends->end(); it++) {
             FriendView * f = (FriendView*)(*it);
             if (f->user.userName == user.userName) {
-                canvas->removeWidgetFromList(it, false);
+                canvas->removeWidget(it, false);
                 break;
             }
         }
