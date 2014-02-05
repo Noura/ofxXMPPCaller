@@ -22,6 +22,7 @@ ofxXMPPCaller::ofxXMPPCaller(float _x, float _y, string server, string user, str
     
     sharedFonts = new ofxUICanvas();
     sharedFonts->setFont("GUI/NewMediaFett.ttf");
+    sharedFonts->setVisible(false);
 }
 
 void ofxXMPPCaller::setup() {
@@ -81,7 +82,7 @@ void ofxXMPPCaller::launch(bool & e) {
     
     // unlaunchCanvas and unlaunchButton will unlaunch or "close" the chat UI
     unlaunchCanvas = new ofxUICanvas(unlaunchX, unlaunchY, unlaunchW, unlaunchH, sharedFonts);
-    unlaunchButton = new CustomEventLabelButton("Close", unlaunchW - 2.0 * margin, unlaunchH - 2.0 * margin, 0, 0, OFX_UI_FONT_SMALL_SIZE);
+    unlaunchButton = new CustomEventLabelButton("Close", unlaunchW - 2.0 * margin, unlaunchH - 2.0 * margin, 0, 0, OFX_UI_FONT_SMALL);
     unlaunchCanvas->addWidget(unlaunchButton);
     
     ofAddListener(unlaunchButton->mousePressed, this, &ofxXMPPCaller::unlaunch);
