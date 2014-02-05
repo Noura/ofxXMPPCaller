@@ -66,7 +66,7 @@ void CallingGUI::draw() {
     if (callingDialog) callingDialog->draw();
 }
 
-void CallingGUI::onChatContactChange(ofxXMPPUser & _user) {/*
+void CallingGUI::onChatContactChange(ofxXMPPUser & _user) {
     delete messagesView;
     delete messages;
 
@@ -75,9 +75,9 @@ void CallingGUI::onChatContactChange(ofxXMPPUser & _user) {/*
     messages->setView(messagesView);
     messagesView->setModel(messages);
     messagesView->setup();
-*/}
+}
 
-void CallingGUI::onNewRemoteMessage(ofxXMPPMessage & _msg) {/*
+void CallingGUI::onNewRemoteMessage(ofxXMPPMessage & _msg) {
     if (isSameXMPPUserName(_msg.from, appState->chatContact.userName)) {
         messages->addMessage(_msg);
     } else {
@@ -94,7 +94,7 @@ void CallingGUI::onNewRemoteMessage(ofxXMPPMessage & _msg) {/*
         callingDialog->setup();
         ofAddListener(callingDialog->answer, this, &CallingGUI::onCallingDialogAnswer);
     }
-*/}
+}
 
 bool CallingGUI::isSameXMPPUserName(string userName1, string userName2) {
     // sometimes email addresses have extra junk characters at the end
