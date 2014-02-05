@@ -32,8 +32,10 @@ MessagesView::~MessagesView() {
     if (model)
         ofRemoveListener(model->newMessage, this, &MessagesView::addMessage);
 
+    /* TODO get input events again
     if (composingMsg)
         ofRemoveListener(composingMsg->inputSubmitted, this, &MessagesView::onNewLocalMessage);
+     */
     
     delete messagesCanvas;
     delete composingCanvas;
@@ -74,8 +76,12 @@ void MessagesView::setup() {
     composingCanvas = new ofxUICanvas(x, y + title_h + canvas_h, w, h - title_h - canvas_h);
     composingMsg = new ofxUITextInput("composing", "", w, h - title_h - canvas_h, x, y + title_h + canvas_h);
     composingCanvas->addWidgetDown(composingMsg);
-    composingMsg->focus();
+    
+    composingMsg->setFocus(true);
+    
+    /* TODO get input events again
     ofAddListener(composingMsg->inputSubmitted, this, &MessagesView::onNewLocalMessage);
+     */
 }
 
 void MessagesView::onNewLocalMessage(string &msg) {
@@ -84,7 +90,7 @@ void MessagesView::onNewLocalMessage(string &msg) {
 
 void MessagesView::addMessage(ofxXMPPMessage &msg) {
     string text = formatMessage(msg);
-    ofxUITextArea * messageView = new ofxUITextArea(text, text, w - OFX_UI_MIN_SCROLLBAR_W - 2.0);
+    ofxUITextArea * messageView = new ofxUITextArea(text, text, w -  ofxUIDynamicListVerticalScrollbarCanvas::scrollbarDefaultWidth - 2.0);
 
     messagesCanvas->addWidget(messageView);
     messagesCanvas->scrollToBottom();
