@@ -81,13 +81,11 @@ void ofxXMPPCaller::unlaunch(bool & e) {
     deletes();
     // If there's an xmpp connection, close it but without crashing?
     //xmpp.stop();
-    cout<<xmpp.getConnectionState();
     if(xmpp.getConnectionState()==ofxXMPPConnected){
         //xmpp.stop();
-        delete xmpp;
-        cout<<"\n Disconnecting???";
+        //delete xmpp;
+        //TODO figure out how to stop being connected?
     }
-    cout<<xmpp.getConnectionState();
     float launchW = 1024;
     float launchH = 768;
     float margin = 3;
@@ -143,7 +141,6 @@ void ofxXMPPCaller::unlaunch(bool & e) {
 void ofxXMPPCaller::launch(bool & e) {
     if(loginGUI==NULL || proccessLoginInfo()){
     deletes();
-    cout<<user<<password<<server;
     if(xmpp.getConnectionState()!=ofxXMPPConnected)
         xmpp.connect(server, user, password);
     // gui is the chat UI
