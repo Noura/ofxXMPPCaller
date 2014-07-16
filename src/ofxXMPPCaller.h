@@ -38,6 +38,7 @@ class ofxXMPPCaller {
 public:
     
     ofxXMPPCaller(float _x, float _y, string server, string user, string password, string _launchButtonLabel = "Launch ofxXMPPCaller", string _capability = "");
+    ofxXMPPCaller(float _x, float _y, string _launchButtonLabel = "Launch ofxXMPPCaller", string _capability = "");
     ~ofxXMPPCaller();
     
     void setup();
@@ -53,17 +54,20 @@ public:
     ofxXMPP xmpp;
     
 protected:
-    
+    bool proccessLoginInfo();
     void deletes();
     
     float x, y;
 
     CallingGUI * gui;
-    ofxUICanvas * launchCanvas, * unlaunchCanvas;
-    CustomEventLabelButton * launchButton, * unlaunchButton;
-    string launchButtonLabel;
-    
+    ofxUICanvas * loginGUI, * unlaunchCanvas;
+    CustomEventLabelButton * loginButton, * unlaunchButton;
+    string launchButtonLabel, server, user, password;
+    ofxUILabel *usernameLabel, *passwordLabel, *emailLabel, *warning;
+    ofxUITextInput *usernameInput, *passwordInput;
+    ofxXmlSettings *settings;
     ofxUICanvas * sharedFonts;
+    bool onLoginGui;
     
 };
 

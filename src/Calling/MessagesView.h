@@ -14,6 +14,8 @@
 #include "ofMain.h"
 #include "ofxUI.h"
 
+#include "dynamicListVerticalScrollbarCanvas.h"
+
 #include "SharedStateBundle.h"
 #include "Messages.h"
 #include "FriendView.h"
@@ -47,7 +49,7 @@ private:
     
     float x, y, w, h, canvas_h, title_h;
     string title;
-    ofxUIDynamicListVerticalScrollbarCanvas * messagesCanvas;
+    dynamicListVerticalScrollbarCanvas * messagesCanvas;
     ofxUICanvas * composingCanvas;
     ofxUITextInput * composingMsg;
     ofxUICanvas * callButtonCanvas;

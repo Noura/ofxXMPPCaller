@@ -29,7 +29,7 @@ FriendsView::~FriendsView() {
 }
 
 void FriendsView::setup() {
-    canvas = new ofxUIDynamicListVerticalScrollbarCanvas(x, y, w, h - legend_h, sharedFonts);
+    canvas = new dynamicListVerticalScrollbarCanvas(x, y, w, h - legend_h, sharedFonts);
     canvas->getScrollbar()->setImage("GUI/scrollbar.png");
     
     const vector<ofxXMPPUser> & friends = xmpp->getFriends();

@@ -66,7 +66,7 @@ void MessagesView::setup() {
         }
     }
     
-    messagesCanvas = new ofxUIDynamicListVerticalScrollbarCanvas(x, y + title_h, w, canvas_h);
+    messagesCanvas = new dynamicListVerticalScrollbarCanvas(x, y + title_h, w, canvas_h);
 
     messagesCanvas->getScrollbar()->setImage("GUI/scrollbar.png");
     for (int i = 0; i < model->messages.size(); i++ ) {
@@ -90,7 +90,7 @@ void MessagesView::onNewLocalMessage(string &msg) {
 
 void MessagesView::addMessage(ofxXMPPMessage &msg) {
     string text = formatMessage(msg);
-    ofxUITextArea * messageView = new ofxUITextArea(text, text, w -  ofxUIDynamicListVerticalScrollbarCanvas::scrollbarDefaultWidth - 2.0);
+    ofxUITextArea * messageView = new ofxUITextArea(text, text, w -  dynamicListVerticalScrollbarCanvas::scrollbarDefaultWidth - 2.0);
 
     messagesCanvas->addWidget(messageView);
     messagesCanvas->scrollToBottom();

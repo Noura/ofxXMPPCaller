@@ -17,6 +17,7 @@ class CallingGUI;
 
 #include "SharedStateBundle.h"
 #include "FriendView.h"
+#include "dynamicListVerticalScrollbarCanvas.h"
 
 class FriendsView {
     
@@ -38,7 +39,7 @@ private:
     
     float x, y, w, h, legend_h;
     float scroll_w = 30;
-    ofxUIDynamicListVerticalScrollbarCanvas * canvas;
+    dynamicListVerticalScrollbarCanvas * canvas;
     deque<ofxXMPPUser> to_remove;
     deque<ofxXMPPUser> to_add;
     

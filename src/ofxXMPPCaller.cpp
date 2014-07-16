@@ -11,13 +11,39 @@ ofxXMPPCaller::ofxXMPPCaller(float _x, float _y, string server, string user, str
 , y(_y)
 , launchButtonLabel(_launchButtonLabel)
 , gui(NULL)
-, launchCanvas(NULL)
-, launchButton(NULL)
+, loginGUI(NULL)
+, loginButton(NULL)
 , unlaunchCanvas(NULL)
-, unlaunchButton(NULL) {
+, unlaunchButton(NULL),
+ onLoginGui(false){
     appState.setCallCapability(_capability);
     xmpp.setShow(ofxXMPPShowAvailable);
-    xmpp.connect(server, user, password);
+     this->server = server;
+     this->user = user;
+     this->password = password;
+    xmpp.setCapabilities(appState.callCapability);
+    
+    sharedFonts = new ofxUICanvas();
+    sharedFonts->setFont("GUI/NewMediaFett.ttf");
+    sharedFonts->setVisible(false);
+}
+
+ofxXMPPCaller::ofxXMPPCaller(float _x, float _y, string _launchButtonLabel, string _capability)
+: x(_x)
+, y(_y)
+, launchButtonLabel(_launchButtonLabel)
+, gui(NULL)
+, loginGUI(NULL)
+, loginButton(NULL)
+, unlaunchCanvas(NULL)
+, unlaunchButton(NULL)
+, onLoginGui(true){
+    
+    appState.setCallCapability(_capability);
+    xmpp.setShow(ofxXMPPShowAvailable);
+    this->server = "talk.google.com";
+    this->user = "";
+    this->password = "";
     xmpp.setCapabilities(appState.callCapability);
     
     sharedFonts = new ofxUICanvas();
@@ -26,8 +52,10 @@ ofxXMPPCaller::ofxXMPPCaller(float _x, float _y, string server, string user, str
 }
 
 void ofxXMPPCaller::setup() {
-    bool e = true;
-    unlaunch(e);
+    if (onLoginGui)
+        unlaunch(onLoginGui);
+    else
+        launch(onLoginGui);
 }
 
 ofxXMPPCaller::~ofxXMPPCaller() {
@@ -37,13 +65,13 @@ ofxXMPPCaller::~ofxXMPPCaller() {
 
 void ofxXMPPCaller::update() {
     if (gui) gui->update();
-    if (launchCanvas) launchCanvas->update();
+    if (loginGUI) loginGUI->update();
     if (unlaunchCanvas) unlaunchCanvas->update();
 }
 
 void ofxXMPPCaller::draw() {
     if (gui) gui->draw();
-    if (launchCanvas) launchCanvas->draw();
+    if (loginGUI) loginGUI->draw();
     if (unlaunchCanvas) unlaunchCanvas->draw();
 }
 
@@ -51,25 +79,73 @@ void ofxXMPPCaller::draw() {
 /// The dummy argument is so that this function can be triggered as an event callback.
 void ofxXMPPCaller::unlaunch(bool & e) {
     deletes();
-    float launchW = 75;
-    float launchH = 40;
+    // If there's an xmpp connection, close it but without crashing?
+    //xmpp.stop();
+    cout<<xmpp.getConnectionState();
+    if(xmpp.getConnectionState()==ofxXMPPConnected){
+        //xmpp.stop();
+        delete xmpp;
+        cout<<"\n Disconnecting???";
+    }
+    cout<<xmpp.getConnectionState();
+    float launchW = 1024;
+    float launchH = 768;
     float margin = 3;
     // launchCanvas and launchButton will launch or "open" the chat UI
-    launchCanvas = new ofxUICanvas(x, y, launchW, launchH, sharedFonts);
-    launchButton = new CustomEventLabelButton(launchButtonLabel, launchW - 2.0 * margin, launchH - 2.0 * margin, x, y, OFX_UI_FONT_SMALL);
-    launchCanvas->addWidget(launchButton);
+    loginGUI = new ofxUICanvas(x, y, launchW, launchH, sharedFonts);
     
-    ofAddListener(launchButton->mousePressed, this, &ofxXMPPCaller::launch);
+    loginGUI->setWidgetSpacing(10);
+    
+    usernameLabel  = new ofxUILabel("usernameLabel", "Username: ", OFX_UI_FONT_LARGE);
+    loginGUI->addWidgetDown(usernameLabel);
+    
+    passwordLabel  = new ofxUILabel("passwordLabel", "Password: ", OFX_UI_FONT_LARGE);
+    loginGUI->addWidgetSouthOf(passwordLabel, "usernameLabel");
+    
+    passwordInput = new ofxUITextInput("passwordInput", password, 240, 16, 0, 0, OFX_UI_FONT_MEDIUM);
+    passwordInput->setDrawOutline(true);
+    passwordInput->setTriggerType(OFX_UI_TEXTINPUT_ON_ENTER);
+    passwordInput->setAutoClear(false);
+    loginGUI->addWidgetEastOf(passwordInput, "passwordLabel");
+    
+    if(user.find("@gmail.com")!=string::npos)
+        user.erase(user.length()-10, user.length());
+    usernameInput = new ofxUITextInput("usernameInput", user, 240, 16, 0, 0, OFX_UI_FONT_MEDIUM);
+    loginGUI->addWidgetNorthOf(usernameInput, "passwordInput");
+    usernameInput->setTriggerType(OFX_UI_TEXTINPUT_ON_ENTER);
+    usernameInput->setDrawOutline(true);
+    usernameInput->setAutoClear(false);
+    
+    emailLabel = new ofxUILabel("emailLabel", "@gmail.com", OFX_UI_FONT_MEDIUM);
+    loginGUI->addWidgetEastOf(emailLabel, "usernameInput");
+    
+    
+    loginButton = new CustomEventLabelButton(launchButtonLabel, 120, 16, x, y, OFX_UI_FONT_SMALL);
+    loginButton->setDrawOutline(true);
+    loginGUI->addWidgetSouthOf(loginButton, "passwordInput");
+    
+    warning = new ofxUILabel("warning", "", OFX_UI_FONT_MEDIUM);
+    loginGUI->addWidgetSouthOf(warning, "Login");
+    loginGUI->getWidget("warning")->setColorFill(ofxUIColor(255,0,0));
+    
+    loginGUI->centerWidgets();
+    
+    ofAddListener(loginButton->mousePressed, this, &ofxXMPPCaller::launch);
     
     ofColor dark(100, 100, 100);
-    launchCanvas->setColorBack(dark);
+    loginGUI->setColorBack(dark);
+    
+    loginGUI->setColorOutline(ofColor(255,255,255));
 }
 
-/// Sets the UI to the "open" state, showing contacts to chat with.
+/// Sets the UI to the "open" state, showing contacts to chat with. Also starts the xmpp connection
 /// The dummy argument is so that this function can be triggered as an event callback.
 void ofxXMPPCaller::launch(bool & e) {
+    if(loginGUI==NULL || proccessLoginInfo()){
     deletes();
-    
+    cout<<user<<password<<server;
+    if(xmpp.getConnectionState()!=ofxXMPPConnected)
+        xmpp.connect(server, user, password);
     // gui is the chat UI
     gui = new CallingGUI(x, y, &appState, &xmpp, sharedFonts);
     gui->setup();
@@ -82,21 +158,22 @@ void ofxXMPPCaller::launch(bool & e) {
     
     // unlaunchCanvas and unlaunchButton will unlaunch or "close" the chat UI
     unlaunchCanvas = new ofxUICanvas(unlaunchX, unlaunchY, unlaunchW, unlaunchH, sharedFonts);
-    unlaunchButton = new CustomEventLabelButton("Close", unlaunchW - 2.0 * margin, unlaunchH - 2.0 * margin, 0, 0, OFX_UI_FONT_SMALL);
+    unlaunchButton = new CustomEventLabelButton("Logout", unlaunchW - 2.0 * margin, unlaunchH - 2.0 * margin, 0, 0, OFX_UI_FONT_SMALL);
     unlaunchCanvas->addWidget(unlaunchButton);
     
     ofAddListener(unlaunchButton->mousePressed, this, &ofxXMPPCaller::unlaunch);
     
     ofColor dark(100, 100, 100);
     unlaunchCanvas->setColorBack(dark);
+    }
 }
 
 void ofxXMPPCaller::deletes() {
-    if (launchCanvas) {
-        ofRemoveListener(launchButton->mousePressed, this, &ofxXMPPCaller::launch);
-        delete launchCanvas;
-        launchCanvas = NULL;
-        launchButton = NULL;
+    if (loginGUI) {
+        ofRemoveListener(loginButton->mousePressed, this, &ofxXMPPCaller::launch);
+        delete loginGUI;
+        loginGUI = NULL;
+        loginButton = NULL;
     }
     if (unlaunchCanvas) {
         ofRemoveListener(unlaunchButton->mousePressed, this, &ofxXMPPCaller::unlaunch);
@@ -105,7 +182,51 @@ void ofxXMPPCaller::deletes() {
         unlaunchButton = NULL;
     }
     if (gui) {
+        
+        //close xmpp connection without crashing?
         delete gui;
         gui = NULL;
     }
+}
+
+bool ofxXMPPCaller::proccessLoginInfo(){
+    string u = usernameInput->getTextString();
+    string p = passwordInput->getTextString();
+    
+    if (u.length()<=0) {
+        if (p.length()<=0){
+            
+            warning->setLabel("Enter a username and password!");
+            
+        }
+        else
+            warning->setLabel("Enter a username!");
+        return false;
+    }
+    else if (p.length()<=0){
+        
+        warning->setLabel("Enter a password!");
+        return false;
+        
+    }
+    else{
+        user = u+"@gmail.com";
+        password = p;
+        //cout<<user+" "+password+"\n";
+        
+        /*clear fields
+        usernameInput->setTextString("");
+        passwordInput->setTextString("");
+        */
+        
+        
+        /*xml settings
+        settings->setValue("settings:user", user+"@gmail.com");
+        settings->setValue("settings:pwd", password);
+        settings->saveFile("settings.xml");
+         */
+        //loginGUI->toggleVisible();
+        return true;
+    }
+    
 }
