@@ -75,9 +75,18 @@ void MessagesView::setup() {
 
     composingCanvas = new ofxUICanvas(x, y + title_h + canvas_h, w, h - title_h - canvas_h);
     float margin = OFX_UI_GLOBAL_PADDING + OFX_UI_GLOBAL_WIDGET_SPACING;
-    composingMsg = new ofxUITextInput("composing", "", w - 2.0 * margin + 4.0, h - title_h - canvas_h - 2.0 * margin + 4.0, margin, margin);
+    composingMsg = new multiLineTextInput("composing", "", w - 2.0 * margin + 4.0, h - title_h - canvas_h - 2.0 * margin + 4.0, margin, margin);
     composingCanvas->addWidgetDown(composingMsg);
-    composingMsg->setFocus(true);
+    
+    //set the cursor color
+    composingMsg->getLabelWidget()->setColorFillHighlight(ofColor(100,100,100));
+    
+    //composingCanvas->setColorOutline(ofColor(0,0,0));
+    //composingCanvas->setDrawOutline(true);
+    
+    composingCanvas->centerWidgets();
+    
+    //composingMsg->setFocus(true);
     
     /* TODO get input events again
     ofAddListener(composingMsg->inputSubmitted, this, &MessagesView::onNewLocalMessage);

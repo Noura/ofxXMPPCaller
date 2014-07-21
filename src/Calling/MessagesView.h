@@ -15,7 +15,7 @@
 #include "ofxUI.h"
 
 #include "dynamicListVerticalScrollbarCanvas.h"
-
+#include "multiLineTextInput.h"
 #include "SharedStateBundle.h"
 #include "Messages.h"
 #include "FriendView.h"
@@ -51,7 +51,7 @@ private:
     string title;
     dynamicListVerticalScrollbarCanvas * messagesCanvas;
     ofxUICanvas * composingCanvas;
-    ofxUITextInput * composingMsg;
+    multiLineTextInput * composingMsg;
     ofxUICanvas * callButtonCanvas;
     ofxUILabelButton * callButton;
     

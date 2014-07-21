@@ -82,7 +82,7 @@ void ofxXMPPCaller::unlaunch(bool & e) {
     // If there's an xmpp connection, close it but without crashing?
     //xmpp.stop();
     if(xmpp.getConnectionState()==ofxXMPPConnected){
-        //xmpp.stop();
+        xmpp.stop();
         //delete xmpp;
         //TODO figure out how to stop being connected?
     }
@@ -181,6 +181,7 @@ void ofxXMPPCaller::deletes() {
     if (gui) {
         
         //close xmpp connection without crashing?
+        //xmpp.stop();
         delete gui;
         gui = NULL;
     }
