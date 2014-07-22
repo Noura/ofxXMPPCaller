@@ -69,6 +69,8 @@ public:
     
     void formatTextString();
     
+    ofEvent<string> inputSubmitted;
+    
 protected:
     //ofxUITextArea *textArea;
     string defaultstring;
@@ -80,4 +82,5 @@ protected:
     int cursorChar, cursorLine, numLinesLimit;
 
     bool shiftKeyPressed;
+    
 };

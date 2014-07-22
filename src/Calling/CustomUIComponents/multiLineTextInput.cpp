@@ -130,8 +130,15 @@ void multiLineTextInput::drawCursor() {
     ofxUILabel * label = getLabelWidget();
 
     string beforeCursor = "";
+    
+    int drawLine=cursorLine;
+    
+    //hack to fix the cursor drawing when the lines of input exceed numLinesLimit
+    if(cursorLine>=numLinesLimit&&textLines.size()>numLinesLimit)
+        drawLine=drawLine-1;
+    
     if (textLines.size() > 0) {
-        beforeCursor = textLines[cursorLine].substr(0, cursorChar);
+        beforeCursor = textLines[drawLine].substr(0, cursorChar);
     }
 
     // we need to put "." on both ends of the string so that the width of
@@ -139,7 +146,7 @@ void multiLineTextInput::drawCursor() {
     float xOffset = label->getStringWidth("." + beforeCursor + ".") - label->getStringWidth("..");
     
     float x = getRect()->getX() + xOffset;
-    float y = getLineTopY(cursorLine);
+    float y = getLineTopY(drawLine);
     
     ofxUIRectangle * parentRect = parent->getRect();
     x = CLAMP(x, parentRect->x + rect->x, parentRect->x + rect->x + rect->width - padding);
@@ -169,6 +176,11 @@ void multiLineTextInput::drawFill() {
                 {
                     label->drawStringShadow(rect->getX(), rect->getY()+(lineHeight+lineSpaceSize)*(i+1)-lineSpaceSize, textLines[textLines.size()-numLinesLimit+i]);
                 }
+                /*
+                cout<<cursorLine<<" "<<numLinesLimit;
+                if(cursorLine>=numLinesLimit)
+                    cursorLine=cursorLine-1;
+                 */
             }else{
                 
                 for(unsigned int i = 0; i < textLines.size(); i++)
@@ -185,6 +197,8 @@ void multiLineTextInput::drawFill() {
             {
                 label->drawStringShadow(rect->getX(), rect->getY()+(lineHeight+lineSpaceSize)*(i+1)-lineSpaceSize, textLines[textLines.size()-numLinesLimit+i]);
             }
+            
+             
         }else{
             
             for(unsigned int i = 0; i < textLines.size(); i++)
@@ -299,6 +313,8 @@ void multiLineTextInput::keyPressed(int key) {
                 triggerEvent(this);
                 if(autoclear) {
                     string input = textstring.substr();
+                    //This is the custom event
+                    ofNotifyEvent(inputSubmitted, input, this);
                     clearText();
                     clicked = true;
                 }

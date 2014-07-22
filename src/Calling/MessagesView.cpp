@@ -32,10 +32,9 @@ MessagesView::~MessagesView() {
     if (model)
         ofRemoveListener(model->newMessage, this, &MessagesView::addMessage);
 
-    /* TODO get input events again
     if (composingMsg)
         ofRemoveListener(composingMsg->inputSubmitted, this, &MessagesView::onNewLocalMessage);
-     */
+     
     
     delete messagesCanvas;
     delete composingCanvas;
@@ -67,12 +66,15 @@ void MessagesView::setup() {
     }
     
     messagesCanvas = new dynamicListVerticalScrollbarCanvas(x, y + title_h, w, canvas_h);
-
+    //messagesCanvas = new dynamicListVerticalScrollbarCanvas(310, 20 , w, canvas_h);
+    //messagesCanvas->setDrawOutline(true);
     messagesCanvas->getScrollbar()->setImage("GUI/scrollbar.png");
     for (int i = 0; i < model->messages.size(); i++ ) {
         addMessage(model->messages[i]);
     }
-
+    //testing
+    cout<<messagesCanvas->getWidgetList()->size();
+    
     composingCanvas = new ofxUICanvas(x, y + title_h + canvas_h, w, h - title_h - canvas_h);
     float margin = OFX_UI_GLOBAL_PADDING + OFX_UI_GLOBAL_WIDGET_SPACING;
     composingMsg = new multiLineTextInput("composing", "", w - 2.0 * margin + 4.0, h - title_h - canvas_h - 2.0 * margin + 4.0, margin, margin);
@@ -83,14 +85,12 @@ void MessagesView::setup() {
     
     //composingCanvas->setColorOutline(ofColor(0,0,0));
     //composingCanvas->setDrawOutline(true);
-    
     composingCanvas->centerWidgets();
     
     //composingMsg->setFocus(true);
     
-    /* TODO get input events again
     ofAddListener(composingMsg->inputSubmitted, this, &MessagesView::onNewLocalMessage);
-     */
+     
 }
 
 void MessagesView::onNewLocalMessage(string &msg) {
@@ -100,9 +100,11 @@ void MessagesView::onNewLocalMessage(string &msg) {
 void MessagesView::addMessage(ofxXMPPMessage &msg) {
     string text = formatMessage(msg);
     ofxUITextArea * messageView = new ofxUITextArea(text, text, w -  dynamicListVerticalScrollbarCanvas::scrollbarDefaultWidth - 2.0);
-
     messagesCanvas->addWidget(messageView);
     messagesCanvas->scrollToBottom();
+    
+    cout<<messagesCanvas->getWidgetList()->size();
+    
 }
 
 string MessagesView::formatMessage(ofxXMPPMessage msg) {

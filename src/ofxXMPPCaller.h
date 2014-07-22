@@ -68,6 +68,7 @@ protected:
     ofxXmlSettings *settings;
     ofxUICanvas * sharedFonts;
     bool onLoginGui;
+    void setupLogin();
     
 };
 

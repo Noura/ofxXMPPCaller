@@ -86,54 +86,9 @@ void ofxXMPPCaller::unlaunch(bool & e) {
         //delete xmpp;
         //TODO figure out how to stop being connected?
     }
-    float launchW = 1024;
-    float launchH = 768;
-    float margin = 3;
-    // launchCanvas and launchButton will launch or "open" the chat UI
-    loginGUI = new ofxUICanvas(x, y, launchW, launchH, sharedFonts);
     
-    loginGUI->setWidgetSpacing(10);
-    
-    usernameLabel  = new ofxUILabel("usernameLabel", "Username: ", OFX_UI_FONT_LARGE);
-    loginGUI->addWidgetDown(usernameLabel);
-    
-    passwordLabel  = new ofxUILabel("passwordLabel", "Password: ", OFX_UI_FONT_LARGE);
-    loginGUI->addWidgetSouthOf(passwordLabel, "usernameLabel");
-    
-    passwordInput = new ofxUITextInput("passwordInput", password, 240, 16, 0, 0, OFX_UI_FONT_MEDIUM);
-    passwordInput->setDrawOutline(true);
-    passwordInput->setTriggerType(OFX_UI_TEXTINPUT_ON_ENTER);
-    passwordInput->setAutoClear(false);
-    loginGUI->addWidgetEastOf(passwordInput, "passwordLabel");
-    
-    if(user.find("@gmail.com")!=string::npos)
-        user.erase(user.length()-10, user.length());
-    usernameInput = new ofxUITextInput("usernameInput", user, 240, 16, 0, 0, OFX_UI_FONT_MEDIUM);
-    loginGUI->addWidgetNorthOf(usernameInput, "passwordInput");
-    usernameInput->setTriggerType(OFX_UI_TEXTINPUT_ON_ENTER);
-    usernameInput->setDrawOutline(true);
-    usernameInput->setAutoClear(false);
-    
-    emailLabel = new ofxUILabel("emailLabel", "@gmail.com", OFX_UI_FONT_MEDIUM);
-    loginGUI->addWidgetEastOf(emailLabel, "usernameInput");
-    
-    
-    loginButton = new CustomEventLabelButton(launchButtonLabel, 120, 16, x, y, OFX_UI_FONT_SMALL);
-    loginButton->setDrawOutline(true);
-    loginGUI->addWidgetSouthOf(loginButton, "passwordInput");
-    
-    warning = new ofxUILabel("warning", "", OFX_UI_FONT_MEDIUM);
-    loginGUI->addWidgetSouthOf(warning, "Login");
-    loginGUI->getWidget("warning")->setColorFill(ofxUIColor(255,0,0));
-    
-    loginGUI->centerWidgets();
-    
-    ofAddListener(loginButton->mousePressed, this, &ofxXMPPCaller::launch);
-    
-    ofColor dark(100, 100, 100);
-    loginGUI->setColorBack(dark);
-    
-    loginGUI->setColorOutline(ofColor(255,255,255));
+    setupLogin();
+
 }
 
 /// Sets the UI to the "open" state, showing contacts to chat with. Also starts the xmpp connection
@@ -227,4 +182,55 @@ bool ofxXMPPCaller::proccessLoginInfo(){
         return true;
     }
     
+}
+
+void ofxXMPPCaller::setupLogin(){
+    float launchW = 1024;
+    float launchH = 768;
+    float margin = 3;
+    // launchCanvas and launchButton will launch or "open" the chat UI
+    loginGUI = new ofxUICanvas(x, y, launchW, launchH, sharedFonts);
+    
+    loginGUI->setWidgetSpacing(10);
+    
+    usernameLabel  = new ofxUILabel("usernameLabel", "Username: ", OFX_UI_FONT_LARGE);
+    loginGUI->addWidgetDown(usernameLabel);
+    
+    passwordLabel  = new ofxUILabel("passwordLabel", "Password: ", OFX_UI_FONT_LARGE);
+    loginGUI->addWidgetSouthOf(passwordLabel, "usernameLabel");
+    
+    passwordInput = new ofxUITextInput("passwordInput", password, 240, 16, 0, 0, OFX_UI_FONT_MEDIUM);
+    passwordInput->setDrawOutline(true);
+    passwordInput->setTriggerType(OFX_UI_TEXTINPUT_ON_ENTER);
+    passwordInput->setAutoClear(false);
+    loginGUI->addWidgetEastOf(passwordInput, "passwordLabel");
+    
+    if(user.find("@gmail.com")!=string::npos)
+        user.erase(user.length()-10, user.length());
+    usernameInput = new ofxUITextInput("usernameInput", user, 240, 16, 0, 0, OFX_UI_FONT_MEDIUM);
+    loginGUI->addWidgetNorthOf(usernameInput, "passwordInput");
+    usernameInput->setTriggerType(OFX_UI_TEXTINPUT_ON_ENTER);
+    usernameInput->setDrawOutline(true);
+    usernameInput->setAutoClear(false);
+    
+    emailLabel = new ofxUILabel("emailLabel", "@gmail.com", OFX_UI_FONT_MEDIUM);
+    loginGUI->addWidgetEastOf(emailLabel, "usernameInput");
+    
+    
+    loginButton = new CustomEventLabelButton(launchButtonLabel, 120, 16, x, y, OFX_UI_FONT_SMALL);
+    loginButton->setDrawOutline(true);
+    loginGUI->addWidgetSouthOf(loginButton, "passwordInput");
+    
+    warning = new ofxUILabel("warning", "", OFX_UI_FONT_MEDIUM);
+    loginGUI->addWidgetSouthOf(warning, "Login");
+    loginGUI->getWidget("warning")->setColorFill(ofxUIColor(255,0,0));
+    
+    loginGUI->centerWidgets();
+    
+    ofAddListener(loginButton->mousePressed, this, &ofxXMPPCaller::launch);
+    
+    ofColor dark(100, 100, 100);
+    loginGUI->setColorBack(dark);
+    
+    loginGUI->setColorOutline(ofColor(255,255,255));
 }
