@@ -1,0 +1,7 @@
+ofxOpenCv
+ofxOsc
+ofxXmlSettings
+ofxXMPP
+ofxXMPPCaller
+ofxUI
+ofxXMPPFileTransfer
