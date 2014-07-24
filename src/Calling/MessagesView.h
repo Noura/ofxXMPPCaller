@@ -50,6 +50,7 @@ private:
     float x, y, w, h, canvas_h, title_h;
     string title;
     dynamicListVerticalScrollbarCanvas * messagesCanvas;
+    //even if i convert this to ofxUICanvas, the message history doesn't display...?
     ofxUICanvas * composingCanvas;
     multiLineTextInput * composingMsg;
     ofxUICanvas * callButtonCanvas;

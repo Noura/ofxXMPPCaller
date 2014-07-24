@@ -31,6 +31,7 @@
 #include "ofxUI.h"
 #include "ofxXMPP.h"
 
+#include "LoginUI.h"
 #include "CallingGUI.h"
 #include "SharedStateBundle.h"
 
@@ -60,15 +61,15 @@ protected:
     float x, y;
 
     CallingGUI * gui;
-    ofxUICanvas * loginGUI, * unlaunchCanvas;
-    CustomEventLabelButton * loginButton, * unlaunchButton;
-    string launchButtonLabel, server, user, password;
-    ofxUILabel *usernameLabel, *passwordLabel, *emailLabel, *warning;
-    ofxUITextInput *usernameInput, *passwordInput;
+    LoginUI *loginGUI;
+    ofxUICanvas * unlaunchCanvas;
+    CustomEventLabelButton * unlaunchButton;
+    string launchButtonLabel;
+    
+    string server, user, password;
     ofxXmlSettings *settings;
     ofxUICanvas * sharedFonts;
     bool onLoginGui;
-    void setupLogin();
     
 };
 

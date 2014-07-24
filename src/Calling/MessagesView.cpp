@@ -54,6 +54,7 @@ void MessagesView::setup() {
     if (appState->callCapability.size() > 0) {
         for (int i = 0; i < user.capabilities.size(); i++) {
             if (user.capabilities[i] == appState->callCapability && !callButton) {
+                cout<<"\n Call Button added";
                 float bX = x + w - 50.0;
                 float bY = y + 3.0;
                 float bW = 50.0;
