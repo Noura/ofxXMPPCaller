@@ -15,6 +15,7 @@ void testApp::setup(){
     cout<<server<<" "<<user<<" "<<pwd;
     xmppCaller = new ofxXMPPCaller(0, 0, server, user, pwd, "Login", "telekinect");
     */
+    //xmppCaller = new ofxXMPPCaller(0,0,"talk.google.com", "jajantest@gmail.com", "jajanpassword", "telekinect");
     xmppCaller = new ofxXMPPCaller(0,0,"Login", "telekinect");
     xmppCaller->setup();
 }

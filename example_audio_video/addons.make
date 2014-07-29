@@ -1,0 +1,11 @@
+ofxOpenCv
+ofxOsc
+ofxXmlSettings
+ofxDepthStreamCompression
+ofxGStreamer
+ofxGstRTP
+ofxNice
+ofxSnappy
+ofxUI
+ofxXMPP
+ofxXMPPCaller

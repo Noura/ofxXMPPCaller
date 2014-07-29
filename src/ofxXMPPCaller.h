@@ -69,8 +69,7 @@ protected:
     string server, user, password;
     ofxXmlSettings *settings;
     ofxUICanvas * sharedFonts;
-    bool onLoginGui;
-    
+    bool usingLogin;
 };
 
 #endif /* defined(OFX_XMPP_CALLER_H_) */

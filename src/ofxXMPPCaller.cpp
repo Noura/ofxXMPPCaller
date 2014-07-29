@@ -13,8 +13,8 @@ ofxXMPPCaller::ofxXMPPCaller(float _x, float _y, string server, string user, str
 , gui(NULL)
 , loginGUI(NULL)
 , unlaunchCanvas(NULL)
-, unlaunchButton(NULL),
- onLoginGui(false){
+, unlaunchButton(NULL)
+, usingLogin(false){
     appState.setCallCapability(_capability);
     xmpp.setShow(ofxXMPPShowAvailable);
      this->server = server;
@@ -35,7 +35,7 @@ ofxXMPPCaller::ofxXMPPCaller(float _x, float _y, string _launchButtonLabel, stri
 , loginGUI(NULL)
 , unlaunchCanvas(NULL)
 , unlaunchButton(NULL)
-, onLoginGui(true){
+, usingLogin(true){
     
     appState.setCallCapability(_capability);
     xmpp.setShow(ofxXMPPShowAvailable);
@@ -50,10 +50,10 @@ ofxXMPPCaller::ofxXMPPCaller(float _x, float _y, string _launchButtonLabel, stri
 }
 
 void ofxXMPPCaller::setup() {
-    if (onLoginGui)
-        unlaunch(onLoginGui);
+    if (usingLogin)
+        unlaunch(usingLogin);
     else
-        launch(onLoginGui);
+        launch(usingLogin);
 }
 
 ofxXMPPCaller::~ofxXMPPCaller() {
@@ -76,52 +76,55 @@ void ofxXMPPCaller::draw() {
 /// Sets the UI to the "closed" state, ready to be launched.
 /// The dummy argument is so that this function can be triggered as an event callback.
 void ofxXMPPCaller::unlaunch(bool & e) {
-    deletes();
-    // If there's an xmpp connection, close it but without crashing?
-    //xmpp.stop();
-    if(xmpp.getConnectionState()==ofxXMPPConnected){
-        xmpp.stop();
-        //delete xmpp;
-        //TODO figure out how to stop being connected?
+    if(usingLogin){
+        deletes();
+        if(xmpp.getConnectionState()!=ofxXMPPDisconnected){
+            xmpp.stop();
+        }
+        
+        loginGUI = new LoginUI(x, y, 1024, 768, &appState, sharedFonts);
+        
+        ofAddListener(loginGUI->inputSubmitted, this, &ofxXMPPCaller::launch);
     }
-    loginGUI = new LoginUI(x, y, 1024, 768, &appState, sharedFonts);
-    loginGUI->setup();
-    
-    ofAddListener(loginGUI->inputSubmitted, this, &ofxXMPPCaller::launch);
 }
 
 /// Sets the UI to the "open" state, showing contacts to chat with. Also starts the xmpp connection
 /// The dummy argument is so that this function can be triggered as an event callback.
 void ofxXMPPCaller::launch(bool & e) {
     if(loginGUI==NULL || proccessLoginInfo()){
-        deletes();
+        if(usingLogin){
+            deletes();
+            
+            float unlaunchW = 75;
+            float unlaunchH = 40;
+            float margin = 3;
+            float unlaunchX = ofGetWidth() - unlaunchW;
+            float unlaunchY = y;
+            
+            // unlaunchCanvas and unlaunchButton will unlaunch or "close" the chat UI
+            unlaunchCanvas = new ofxUICanvas(unlaunchX, unlaunchY, unlaunchW, unlaunchH, sharedFonts);
+            unlaunchButton = new CustomEventLabelButton("Logout", unlaunchW - 2.0 * margin, unlaunchH - 2.0 * margin, 0, 0, OFX_UI_FONT_SMALL);
+            unlaunchCanvas->addWidget(unlaunchButton);
+            
+            ofAddListener(unlaunchButton->mousePressed, this, &ofxXMPPCaller::unlaunch);
+            
+            ofColor dark(100, 100, 100);
+            unlaunchCanvas->setColorBack(dark);
+        }
         if(xmpp.getConnectionState()!=ofxXMPPConnected)
             xmpp.connect(server, user, password);
         // gui is the chat UI
         gui = new CallingGUI(x, y, &appState, &xmpp, sharedFonts);
         gui->setup();
-        
-        float unlaunchW = 75;
-        float unlaunchH = 40;
-        float margin = 3;
-        float unlaunchX = ofGetWidth() - unlaunchW;
-        float unlaunchY = y;
-        
-        // unlaunchCanvas and unlaunchButton will unlaunch or "close" the chat UI
-        unlaunchCanvas = new ofxUICanvas(unlaunchX, unlaunchY, unlaunchW, unlaunchH, sharedFonts);
-        unlaunchButton = new CustomEventLabelButton("Logout", unlaunchW - 2.0 * margin, unlaunchH - 2.0 * margin, 0, 0, OFX_UI_FONT_SMALL);
-        unlaunchCanvas->addWidget(unlaunchButton);
-        
-        ofAddListener(unlaunchButton->mousePressed, this, &ofxXMPPCaller::unlaunch);
-        
-        ofColor dark(100, 100, 100);
-        unlaunchCanvas->setColorBack(dark);
     }
+    
+    
+    
 }
 
 void ofxXMPPCaller::deletes() {
     if (loginGUI) {
-        //ofRemoveListener(loginButton->mousePressed, this, &ofxXMPPCaller::launch);
+        ofRemoveListener(loginGUI->inputSubmitted, this, &ofxXMPPCaller::launch);
         delete loginGUI;
         loginGUI = NULL;
     }
@@ -132,9 +135,6 @@ void ofxXMPPCaller::deletes() {
         unlaunchButton = NULL;
     }
     if (gui) {
-        
-        //close xmpp connection without crashing?
-        //xmpp.stop();
         delete gui;
         gui = NULL;
     }
@@ -163,19 +163,13 @@ bool ofxXMPPCaller::proccessLoginInfo(){
     else{
         user = u+"@gmail.com";
         password = p;
-        //cout<<user+" "+password+"\n";
-        
-        /*clear fields
-        usernameInput->setTextString("");
-        passwordInput->setTextString("");
-        */
-        
         
         /*xml settings
         settings->setValue("settings:user", user+"@gmail.com");
         settings->setValue("settings:pwd", password);
         settings->saveFile("settings.xml");
          */
+        
         return true;
     }
     

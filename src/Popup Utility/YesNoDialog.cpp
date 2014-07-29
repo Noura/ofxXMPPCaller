@@ -33,22 +33,27 @@ void YesNoDialog::setup() {
     ofxUIColor gray(100, 100, 100);
     
     canvas = new ofxUICanvas(x, y, w, h);
+    canvas->setFont("GUI/NewMediaFett.ttf");
     canvas->setColorBack(black);
     
     prompt = new ofxUITextArea(msg, msg, w - 2.0 * margin, h - buttonHeight - 3.0 * margin, margin, margin, OFX_UI_FONT_SMALL_SIZE);
+    prompt->getLabelWidget()->setFont(canvas->getFontSmall());
     prompt->setColorBack(white);
     prompt->setColorFill(black);
     
     noButton = new CustomEventLabelButton("No", buttonWidth, buttonHeight, margin, h - margin - buttonHeight, OFX_UI_FONT_SMALL_SIZE);
+    noButton->getLabelWidget()->setFont(canvas->getFontSmall());
     noButton->setColorBack(gray);
     noButton->setColorFill(white);
     noButton->setColorOutline(white);
     
     yesButton = new CustomEventLabelButton("Yes", buttonWidth, buttonHeight, w - margin - buttonWidth, h - margin-buttonHeight, OFX_UI_FONT_SMALL_SIZE);
+    yesButton->getLabelWidget()->setFont(canvas->getFontSmall());
     yesButton->setColorBack(gray);
     yesButton->setColorFill(white);
     yesButton->setColorOutline(white);
-    
+    //TODO Fix this
+    //error on adding prompt with lineHeight->formatTextString->setParent for textArea->addWidget of canvas?
     canvas->addWidget(prompt);
     canvas->addWidget(noButton);
     canvas->addWidget(yesButton);

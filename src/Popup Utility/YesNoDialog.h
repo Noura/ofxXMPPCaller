@@ -17,6 +17,7 @@ class YesNoDialog {
 public:
     
     YesNoDialog(float _x, float _y, float _w, float _h, std::string _msg);
+    
     ~YesNoDialog();
     
     void Yes(bool & val);
