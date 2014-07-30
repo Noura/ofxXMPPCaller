@@ -19,7 +19,7 @@ class LoginUI {
     
 public:
     
-    LoginUI(float _x, float _y,  float _w, float _h, SharedStateBundle * _appState,ofxUICanvas * _sharedFonts);
+    LoginUI(float _x, float _y,  float _w, float _h, ofxUICanvas * _sharedFonts);
     LoginUI(float _x, float _y,  float _w, float _h);
     ~LoginUI();
     
@@ -35,8 +35,6 @@ public:
 protected:
     
     float x, y, w, h;
-    
-    SharedStateBundle * appState;
     
     
     //void trigger(ofxUIEventArgs &e);

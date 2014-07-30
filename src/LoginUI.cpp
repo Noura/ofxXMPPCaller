@@ -8,12 +8,11 @@
 
 #include "LoginUI.h"
 
-LoginUI::LoginUI(float _x, float _y, float _w, float _h, SharedStateBundle * _appState, ofxUICanvas * _sharedFonts)
+LoginUI::LoginUI(float _x, float _y, float _w, float _h, ofxUICanvas * _sharedFonts)
 : x(_x)
 , y(_y)
 , w(_w)
 , h(_h)
-, appState(_appState)
 , sharedFonts(_sharedFonts){
     setup();
 }
@@ -23,7 +22,6 @@ LoginUI::LoginUI(float _x, float _y, float _w, float _h)
 , y(_y)
 , w(_w)
 , h(_h)
-, appState(NULL)
 , sharedFonts(NULL){
     setup();
 }

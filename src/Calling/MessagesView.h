@@ -53,10 +53,10 @@ private:
     //even if i convert this to ofxUICanvas, the message history doesn't display...?
     ofxUICanvas * composingCanvas;
     multiLineTextInput * composingMsg;
-    ofxUICanvas * callButtonCanvas;
-    ofxUILabelButton * callButton;
+    //ofxUICanvas * callButtonCanvas;
+    //ofxUILabelButton * callButton;
     
-    string call_button_label;
+    //string call_button_label;
 
 };
 

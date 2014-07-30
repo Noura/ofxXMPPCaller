@@ -82,7 +82,7 @@ void ofxXMPPCaller::unlaunch(bool & e) {
             xmpp.stop();
         }
         
-        loginGUI = new LoginUI(x, y, 1024, 768, &appState, sharedFonts);
+        loginGUI = new LoginUI(x, y, 1024, 768, sharedFonts);
         
         ofAddListener(loginGUI->inputSubmitted, this, &ofxXMPPCaller::launch);
     }

@@ -19,12 +19,13 @@ MessagesView::MessagesView(float _x, float _y, float _w, float _h, SharedStateBu
 , title_h(30.0)
 , appState(_appState)
 , xmpp(_xmpp)
-, call_button_label("Call")
+//, call_button_label("Call")
 , messagesCanvas(NULL)
 , composingCanvas(NULL)
 , composingMsg(NULL)
-, callButton(NULL)
-, callButtonCanvas(NULL) {
+//, callButton(NULL)
+//, callButtonCanvas(NULL)
+{
     canvas_h = h * CONVERSATION_PERCENT_HEIGHT/100.0 - title_h;
 }
 
@@ -38,7 +39,7 @@ MessagesView::~MessagesView() {
     
     delete messagesCanvas;
     delete composingCanvas;
-    delete callButtonCanvas;
+    //delete callButtonCanvas;
 }
 
 void MessagesView::setModel(Messages * _model) {
@@ -50,7 +51,7 @@ void MessagesView::setup() {
     ofxXMPPUser user = appState->chatContact;
 
     title = FriendView::formatUserName(user.userName);
-    
+    /*
     if (appState->callCapability.size() > 0) {
         for (int i = 0; i < user.capabilities.size(); i++) {
             if (user.capabilities[i] == appState->callCapability && !callButton) {
@@ -65,7 +66,7 @@ void MessagesView::setup() {
             }
         }
     }
-    
+    */
     messagesCanvas = new dynamicListVerticalScrollbarCanvas(x, y + title_h, w, canvas_h);
     //messagesCanvas = new dynamicListVerticalScrollbarCanvas(310, 20 , w, canvas_h);
     //messagesCanvas->setDrawOutline(true);
@@ -124,9 +125,10 @@ void MessagesView::draw() {
     ofPopStyle();
     
     messagesCanvas->draw();
+    /*
     if (callButton)
         callButtonCanvas->draw();
-
+    */
     composingCanvas->draw();
     
     /* TODO add back in "composing" display

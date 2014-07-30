@@ -69,7 +69,18 @@ void CallingGUI::draw() {
 void CallingGUI::onChatContactChange(ofxXMPPUser & _user) {
     delete messagesView;
     delete messages;
-
+    /*
+    cout<<"\n\n";
+    ofxXMPPUser user = appState->chatContact;
+    cout<<FriendView::formatUserName(user.userName);
+    for (int i = 0; i < user.capabilities.size(); i++) {
+        if (user.capabilities[i] == appState->callCapability) {
+            cout<<"has capability";
+            //TODO give off an event here?
+        }
+    }
+    cout<<"\n\n";
+    */
     messages = new Messages(appState, xmpp);
     messagesView = new MessagesView(x + CALLING_GUI_FRIENDS_WIDTH + 2.0 * CALLING_GUI_BORDER_WIDTH, y + CALLING_GUI_BORDER_WIDTH, CALLING_GUI_MESSAGES_WIDTH, ofGetHeight() - 2.0 * CALLING_GUI_BORDER_WIDTH, appState, xmpp);
     messages->setView(messagesView);
@@ -88,8 +99,20 @@ void CallingGUI::onNewRemoteMessage(ofxXMPPMessage & _msg) {
             callingDialog = NULL;
         }
         string dialog = "";
-        dialog += _msg.from.substr();
-        dialog += " just messaged you. Do you want to switch to a conversation with them?";
+        
+        int index = _msg.from.find("/");
+        dialog += _msg.from.substr(0, index);
+        dialog += " says \'";
+        if(_msg.body.length()>200){
+            cout<<"super long message"<<"\n\n\n";
+            dialog+=_msg.body.substr(0, 200)+"...\'. ";
+        }
+        else{
+            dialog+=_msg.body+"\'. ";
+        }
+        dialog+="Do you want to switch to a conversation with them?";
+        //dialog += " just messaged you. Do you want to switch to a conversation with them?";
+        
         callingDialog = new YesNoDialog(700, 50, 300, 200, dialog);
         callingDialog->setup();
         ofAddListener(callingDialog->answer, this, &CallingGUI::onCallingDialogAnswer);
