@@ -127,6 +127,7 @@ void ofApp::sendCall(bool &e){
 void ofApp::onCallReceived(string & from){
 	callFrom = ofSplitString(from,"/")[0];
     string dialog = "You are currently being called by "+callFrom+". Would you like to accept the call?";
+    cout<<"\n\n"<<dialog<<"\n\n";
     callDialog = new YesNoDialog(700, 700-180-10, 300, 180, dialog);
     callDialog->setup();
     ofAddListener(callDialog->answer, this, &ofApp::onCallingDialogAnswer);
