@@ -113,7 +113,7 @@ void CallingGUI::onNewRemoteMessage(ofxXMPPMessage & _msg) {
         dialog+="Do you want to switch to a conversation with them?";
         //dialog += " just messaged you. Do you want to switch to a conversation with them?";
         
-        callingDialog = new YesNoDialog(700, 50, 300, 200, dialog);
+        callingDialog = new YesNoDialog(700, 50, 300, 180, dialog);
         callingDialog->setup();
         ofAddListener(callingDialog->answer, this, &CallingGUI::onCallingDialogAnswer);
     }

@@ -18,7 +18,7 @@ class ofApp : public ofBaseApp{
         LOGIN_SCREEN,
         CALL_MANAGER,
         IN_CALL
-    };
+    }state;
 	public:
 		void setup();
 		void update();
@@ -49,7 +49,7 @@ class ofApp : public ofBaseApp{
     
     void setupCallButton();
     void sendCall(bool&e);
-    
+    void onCallingDialogAnswer(bool & _answer);
     void logout(bool&e);
 		ofxGstXMPPRTP rtp;
 		ofVideoGrabber grabber;
@@ -64,10 +64,23 @@ class ofApp : public ofBaseApp{
     ofxUICanvas*logoutUI;
     CustomEventLabelButton* logoutButton;
     
+    enum CallingState{
+        MissingSettings,
+        Calling,
+        ReceivingCall,
+        InCall,
+        Disconnected
+    }callingState;
+    
+    
+    ofSoundPlayer ring;
+    unsigned long long lastRing;
+    string callFrom;
+    
+    YesNoDialog * callDialog;
     
     ofxUICanvas*callButtonUI;
     CustomEventLabelButton* callButton;
     
     ofxXMPPCaller * xmppCaller;
-    AppCurrentState state;
 };

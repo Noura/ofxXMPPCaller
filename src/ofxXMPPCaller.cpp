@@ -48,7 +48,29 @@ ofxXMPPCaller::ofxXMPPCaller(float _x, float _y, string _launchButtonLabel, stri
     sharedFonts->setFont("GUI/NewMediaFett.ttf");
     sharedFonts->setVisible(false);
 }
-
+/* something something threads
+ofxXMPPCaller::ofxXMPPCaller(float _x, float _y, ofxXMPP x, string _capability)
+: x(_x)
+, y(_y)
+, launchButtonLabel("Login")
+, gui(NULL)
+, loginGUI(NULL)
+, unlaunchCanvas(NULL)
+, unlaunchButton(NULL)
+, usingLogin(true){
+    
+    this->server = "talk.google.com";
+    this->user = "";
+    this->password = "";
+    
+    appState.setCallCapability(_capability);
+    xmpp = x;
+    
+    sharedFonts = new ofxUICanvas();
+    sharedFonts->setFont("GUI/NewMediaFett.ttf");
+    sharedFonts->setVisible(false);
+}
+*/
 void ofxXMPPCaller::setup() {
     if (usingLogin)
         unlaunch(usingLogin);
@@ -139,7 +161,9 @@ void ofxXMPPCaller::deletes() {
         gui = NULL;
     }
 }
-
+SharedStateBundle ofxXMPPCaller::getAppState(){
+    return appState;
+}
 bool ofxXMPPCaller::proccessLoginInfo(){
     string u = loginGUI->getUsername();
     string p = loginGUI->getPassword();

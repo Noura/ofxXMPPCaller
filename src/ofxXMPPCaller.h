@@ -40,6 +40,8 @@ public:
     
     ofxXMPPCaller(float _x, float _y, string server, string user, string password, string _launchButtonLabel = "Launch ofxXMPPCaller", string _capability = "");
     ofxXMPPCaller(float _x, float _y, string _launchButtonLabel = "Launch ofxXMPPCaller", string _capability = "");
+    //something about threads
+    //ofxXMPPCaller(float _x, float _y, ofxXMPP x, string _capability = "");
     ~ofxXMPPCaller();
     
     void setup();
@@ -48,6 +50,7 @@ public:
     void launch(bool & e);
     void unlaunch(bool & e);
     
+    SharedStateBundle getAppState();
     //TODO do something here
     void onConnectionStateChanged(ofxXMPPConnectionState & connectionState);
     
