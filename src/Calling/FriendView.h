@@ -29,7 +29,7 @@ class FriendView : public ofxUILabelButton {
 
 public:
     
-    FriendView(ofxXMPPUser _user, float _w, SharedStateBundle * _appState, ofxXMPP * _xmpp);
+    FriendView(ofxXMPPUser _user, float _w, SharedStateBundle * _appState, shared_ptr<ofxXMPP> _xmpp);
     ~FriendView();
 
     void draw();
@@ -65,7 +65,7 @@ public:
 protected:
 
     SharedStateBundle * appState;
-    ofxXMPP * xmpp;
+    shared_ptr<ofxXMPP> xmpp;
     
 };
 

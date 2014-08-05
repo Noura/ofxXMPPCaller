@@ -23,7 +23,7 @@ class Messages {
     
 public:
     
-    Messages(SharedStateBundle * _appState, ofxXMPP * _xmpp);
+    Messages(SharedStateBundle * _appState, shared_ptr<ofxXMPP> _xmpp);
     ~Messages();
     void setView(MessagesView * view);
     
@@ -36,7 +36,7 @@ public:
 private:
 
     SharedStateBundle * appState;
-    ofxXMPP * xmpp;
+    shared_ptr<ofxXMPP> xmpp;
     MessagesView * view;
     
 };

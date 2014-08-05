@@ -23,7 +23,7 @@ class CallingGUI {
 
 public:
 
-    CallingGUI(float _x, float _y, SharedStateBundle * _appState, ofxXMPP * _xmpp, ofxUICanvas * _sharedFonts);
+    CallingGUI(float _x, float _y, SharedStateBundle * _appState, shared_ptr<ofxXMPP> _xmpp, ofxUICanvas * _sharedFonts);
     ~CallingGUI();
     
     void setup();
@@ -41,7 +41,7 @@ protected:
     float x, y;
     
     SharedStateBundle * appState;
-    ofxXMPP * xmpp;
+    shared_ptr<ofxXMPP>xmpp;
 
     FriendsView * friendsView;
     

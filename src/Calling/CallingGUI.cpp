@@ -6,7 +6,7 @@
 
 #include "CallingGUI.h"
 
-CallingGUI::CallingGUI(float _x, float _y, SharedStateBundle * _appState, ofxXMPP * _xmpp, ofxUICanvas * _sharedFonts)
+CallingGUI::CallingGUI(float _x, float _y, SharedStateBundle * _appState, shared_ptr<ofxXMPP> _xmpp, ofxUICanvas * _sharedFonts)
 : x(_x)
 , y(_y)
 , appState(_appState)

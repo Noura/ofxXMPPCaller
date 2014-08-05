@@ -15,12 +15,13 @@ ofxXMPPCaller::ofxXMPPCaller(float _x, float _y, string server, string user, str
 , unlaunchCanvas(NULL)
 , unlaunchButton(NULL)
 , usingLogin(false){
+    xmpp = shared_ptr<ofxXMPP>(new ofxXMPP);
     appState.setCallCapability(_capability);
-    xmpp.setShow(ofxXMPPShowAvailable);
+    xmpp->setShow(ofxXMPPShowAvailable);
      this->server = server;
      this->user = user;
      this->password = password;
-    xmpp.setCapabilities(appState.callCapability);
+    xmpp->setCapabilities(appState.callCapability);
     
     sharedFonts = new ofxUICanvas();
     sharedFonts->setFont("GUI/NewMediaFett.ttf");
@@ -36,46 +37,49 @@ ofxXMPPCaller::ofxXMPPCaller(float _x, float _y, string _launchButtonLabel, stri
 , unlaunchCanvas(NULL)
 , unlaunchButton(NULL)
 , usingLogin(true){
-    
+    xmpp = shared_ptr<ofxXMPP>(new ofxXMPP);
     appState.setCallCapability(_capability);
-    xmpp.setShow(ofxXMPPShowAvailable);
+    xmpp->setShow(ofxXMPPShowAvailable);
     this->server = "talk.google.com";
     this->user = "";
     this->password = "";
-    xmpp.setCapabilities(appState.callCapability);
+    xmpp->setCapabilities(appState.callCapability);
     
     sharedFonts = new ofxUICanvas();
     sharedFonts->setFont("GUI/NewMediaFett.ttf");
     sharedFonts->setVisible(false);
 }
-/* something something threads
-ofxXMPPCaller::ofxXMPPCaller(float _x, float _y, ofxXMPP x, string _capability)
+
+ofxXMPPCaller::ofxXMPPCaller(float _x, float _y, string server, string user, string password, string _launchButtonLabel, string _capability, shared_ptr<ofxXMPP> _xmpp)
 : x(_x)
 , y(_y)
-, launchButtonLabel("Login")
+, launchButtonLabel(_launchButtonLabel)
 , gui(NULL)
 , loginGUI(NULL)
 , unlaunchCanvas(NULL)
 , unlaunchButton(NULL)
-, usingLogin(true){
-    
-    this->server = "talk.google.com";
-    this->user = "";
-    this->password = "";
-    
+, usingLogin(false){
+    xmpp = _xmpp;
     appState.setCallCapability(_capability);
-    xmpp = x;
+    this->server = server;
+    this->user = user;
+    this->password = password;
     
     sharedFonts = new ofxUICanvas();
     sharedFonts->setFont("GUI/NewMediaFett.ttf");
     sharedFonts->setVisible(false);
 }
-*/
+
+
 void ofxXMPPCaller::setup() {
     if (usingLogin)
         unlaunch(usingLogin);
     else
         launch(usingLogin);
+}
+
+void ofxXMPPCaller::setXMPP(shared_ptr<ofxXMPP> _xmpp){
+    xmpp = _xmpp;
 }
 
 ofxXMPPCaller::~ofxXMPPCaller() {
@@ -100,8 +104,8 @@ void ofxXMPPCaller::draw() {
 void ofxXMPPCaller::unlaunch(bool & e) {
     if(usingLogin){
         deletes();
-        if(xmpp.getConnectionState()!=ofxXMPPDisconnected){
-            xmpp.stop();
+        if(xmpp->getConnectionState()!=ofxXMPPDisconnected){
+            xmpp->stop();
         }
         
         loginGUI = new LoginUI(x, y, 1024, 768, sharedFonts);
@@ -133,10 +137,10 @@ void ofxXMPPCaller::launch(bool & e) {
             ofColor dark(100, 100, 100);
             unlaunchCanvas->setColorBack(dark);
         }
-        if(xmpp.getConnectionState()!=ofxXMPPConnected)
-            xmpp.connect(server, user, password);
+        if(xmpp->getConnectionState()!=ofxXMPPConnected)
+            xmpp->connect(server, user, password);
         // gui is the chat UI
-        gui = new CallingGUI(x, y, &appState, &xmpp, sharedFonts);
+        gui = new CallingGUI(x, y, &appState, xmpp, sharedFonts);
         gui->setup();
     }
     

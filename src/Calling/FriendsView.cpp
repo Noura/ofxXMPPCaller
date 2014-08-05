@@ -10,7 +10,7 @@
 
 #include "FriendsView.h"
 
-FriendsView::FriendsView(float _x, float _y, float _w, float _h, SharedStateBundle * _appState, ofxXMPP * _xmpp, ofxUICanvas * _sharedFonts)
+FriendsView::FriendsView(float _x, float _y, float _w, float _h, SharedStateBundle * _appState, shared_ptr<ofxXMPP> _xmpp, ofxUICanvas * _sharedFonts)
 : x(_x)
 , y(_y)
 , w(_w)

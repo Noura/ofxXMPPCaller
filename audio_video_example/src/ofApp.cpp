@@ -86,7 +86,7 @@ void ofApp::logout(bool &e){
 	ofRemoveListener(rtp.callFinished,this,&ofApp::onCallFinished);
 	ofRemoveListener(rtp.callAccepted,this,&ofApp::onCallAccepted);
     //TODO fix this so that there is only 1 xmpp thread
-    //rtp.getXMPP().stop();
+    rtp.getXMPP().stop();
     
     setupLoginScreen();
 }
@@ -153,6 +153,8 @@ void ofApp::onCallFinished(ofxXMPPTerminateReason & reason){
 		// if we started a call most likely the other end declined it
 		// or the call failed
 		ofSystemAlertDialog("Call declined");
+        //ofRemoveListener(callDialog->answer, this, &ofApp::onCallingDialogAnswer);
+        delete callDialog;
 	}
 	cout << "received end call" << endl;
 	// reset the rtp element to be able to start a new call
@@ -322,16 +324,19 @@ void ofApp::setupRTP(){
     
 	//ofxNiceEnableDebug();
     
+    shared_ptr<ofxXMPP> xmpp = shared_ptr<ofxXMPP>(new ofxXMPP);
+    
+    xmpp->setCapabilities("telekinect");
+    xmpp->setShow(ofxXMPPShowAvailable);
+    
+    rtp.setXMPP(xmpp);
+    
 	rtp.setup(500);
-	rtp.setStunServer("132.177.123.6");
-	rtp.getXMPP().setCapabilities("telekinect");
-    
-	rtp.connectXMPP(server,user,pass);
-    
-    //TODO check that the connection is properly done, otherwise they entered the wrong info for user/pass
-    //and wont be able to see any contacts
+	//rtp.getXMPP().connect(server, user, pass);
+    rtp.setStunServer("132.177.123.6");
 	rtp.addSendVideoChannel(640,480,30);
 	rtp.addSendAudioChannel();
+    
 	calling = -1;
     
 	ofBackground(255);
@@ -341,11 +346,12 @@ void ofApp::setupRTP(){
 	ofAddListener(rtp.callAccepted,this,&ofApp::onCallAccepted);
    
     ofBackground(ofColor(OFX_UI_COLOR_BACK_ALPHA));
+    //move video to mid right
     grabberX = 1000-grabberWidth-50;
     //Chat notification height is 180, notification y = 50
     grabberY = 50+180+10;
     
-    xmppCaller = new ofxXMPPCaller(0,0, server, user, pass, "Login", "telekinect");
+    xmppCaller = new ofxXMPPCaller(0,0, server, user, pass, "Login", "telekinect", xmpp);
     xmppCaller->setup();
     
     setupCallButton();

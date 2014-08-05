@@ -9,7 +9,7 @@
 
 #include "FriendView.h"
  
-FriendView::FriendView(ofxXMPPUser _user, float _w, SharedStateBundle * _appState, ofxXMPP * _xmpp)
+FriendView::FriendView(ofxXMPPUser _user, float _w, SharedStateBundle * _appState, shared_ptr<ofxXMPP> _xmpp)
 : ofxUILabelButton(formatUserName(_user.userName), false, _w, FRIEND_HEIGHT, OFX_UI_FONT_SMALL_SIZE, true)
 , user(_user)
 , appState(_appState)

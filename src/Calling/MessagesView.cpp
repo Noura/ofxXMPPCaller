@@ -11,7 +11,7 @@
 #include "MessagesView.h"
 #include "Messages.h"
 
-MessagesView::MessagesView(float _x, float _y, float _w, float _h, SharedStateBundle * _appState, ofxXMPP * _xmpp)
+MessagesView::MessagesView(float _x, float _y, float _w, float _h, SharedStateBundle * _appState, shared_ptr<ofxXMPP> _xmpp)
 : x(_x)
 , y(_y)
 , w(_w)

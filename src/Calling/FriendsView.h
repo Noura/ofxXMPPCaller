@@ -23,7 +23,7 @@ class FriendsView {
     
 public:
     
-    FriendsView(float _x, float _y, float _w, float _h, SharedStateBundle * _appState, ofxXMPP * _xmpp, ofxUICanvas * _sharedFonts);
+    FriendsView(float _x, float _y, float _w, float _h, SharedStateBundle * _appState, shared_ptr<ofxXMPP> _xmpp, ofxUICanvas * _sharedFonts);
     ~FriendsView();
 
     void addFriendView(ofxXMPPUser & user);
@@ -35,7 +35,7 @@ public:
 private:
     
     SharedStateBundle * appState;
-    ofxXMPP * xmpp;
+    shared_ptr<ofxXMPP> xmpp;
     
     float x, y, w, h, legend_h;
     float scroll_w = 30;
