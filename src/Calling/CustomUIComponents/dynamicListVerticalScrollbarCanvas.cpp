@@ -225,3 +225,7 @@ draggableRect* dynamicListVerticalScrollbarCanvas::getScrollbar() {
 list<ofxUIWidget*>* dynamicListVerticalScrollbarCanvas::getWidgetList() {
     return &listItems;
 }
+
+void dynamicListVerticalScrollbarCanvas::setFont(string path){
+    ofxUIScrollableCanvas::setFont(path);
+}

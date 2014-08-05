@@ -82,7 +82,7 @@ void CallingGUI::onChatContactChange(ofxXMPPUser & _user) {
     cout<<"\n\n";
     */
     messages = new Messages(appState, xmpp);
-    messagesView = new MessagesView(x + CALLING_GUI_FRIENDS_WIDTH + 2.0 * CALLING_GUI_BORDER_WIDTH, y + CALLING_GUI_BORDER_WIDTH, CALLING_GUI_MESSAGES_WIDTH, ofGetHeight() - 2.0 * CALLING_GUI_BORDER_WIDTH, appState, xmpp);
+    messagesView = new MessagesView(x + CALLING_GUI_FRIENDS_WIDTH + 2.0 * CALLING_GUI_BORDER_WIDTH, y + CALLING_GUI_BORDER_WIDTH, CALLING_GUI_MESSAGES_WIDTH, ofGetHeight() - 2.0 * CALLING_GUI_BORDER_WIDTH, appState, xmpp, sharedFonts);
     messages->setView(messagesView);
     messagesView->setModel(messages);
     messagesView->setup();

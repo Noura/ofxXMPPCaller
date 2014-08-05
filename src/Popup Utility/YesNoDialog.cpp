@@ -14,7 +14,18 @@ YesNoDialog::YesNoDialog(float _x, float _y, float _w, float _h, std::string _ms
 , canvas(NULL)
 , prompt(NULL)
 , yesButton(NULL)
-, noButton(NULL) {
+, noButton(NULL)
+, sharedResources(NULL){
+}
+
+YesNoDialog::YesNoDialog(float _x, float _y, float _w, float _h, std::string _msg, ofxUICanvas * _sharedResources)
+: x(_x), y(_y), w(_w), h(_h)
+, msg(_msg)
+, canvas(NULL)
+, prompt(NULL)
+, yesButton(NULL)
+, noButton(NULL)
+, sharedResources(_sharedResources){
 }
 
 YesNoDialog::~YesNoDialog() {
@@ -32,8 +43,13 @@ void YesNoDialog::setup() {
     ofxUIColor white(255, 255, 255);
     ofxUIColor gray(100, 100, 100);
     
-    canvas = new ofxUICanvas(x, y, w, h);
-    canvas->setFont("GUI/NewMediaFett.ttf");
+    if(sharedResources){
+        canvas = new ofxUICanvas(x, y, w, h, sharedResources);
+    }
+    else{
+        canvas = new ofxUICanvas(x, y, w, h);
+        canvas->setFont("GUI/NewMediaFett.ttf");
+    }
     canvas->setColorBack(black);
     
     prompt = new ofxUITextArea(msg, msg, w - 2.0 * margin, h - buttonHeight - 3.0 * margin, margin, margin, OFX_UI_FONT_SMALL_SIZE);

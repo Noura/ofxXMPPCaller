@@ -11,7 +11,6 @@
 
 draggableRect::~draggableRect() {
     delete bounds;
-    delete image;
     ofRemoveListener(ofEvents().mousePressed, this, &draggableRect::onMousePressed);
     ofRemoveListener(ofEvents().mouseReleased, this, &draggableRect::onMouseReleased);
     ofRemoveListener(ofEvents().mouseDragged, this, &draggableRect::onMouseDragged);

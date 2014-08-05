@@ -43,7 +43,7 @@ class ofApp : public ofBaseApp{
 		void onCallFinished(ofxXMPPTerminateReason & reason);
 
     bool proccessLoginInfo(bool &e);
-    void setupRTP();
+    void setupCallManager();
     void setupLoginScreen();
     void setupLogout();
     
@@ -76,11 +76,13 @@ class ofApp : public ofBaseApp{
     ofSoundPlayer ring;
     unsigned long long lastRing;
     string callFrom;
-    
+    bool uiLock;
     YesNoDialog * callDialog;
+    ofxUICanvas * callNotification;
     
     ofxUICanvas*callButtonUI;
     CustomEventLabelButton* callButton;
     
     ofxXMPPCaller * xmppCaller;
+    ofxUICanvas* sharedResources;
 };

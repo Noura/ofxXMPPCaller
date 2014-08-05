@@ -17,6 +17,7 @@ class YesNoDialog {
 public:
     
     YesNoDialog(float _x, float _y, float _w, float _h, std::string _msg);
+    YesNoDialog(float _x, float _y, float _w, float _h, std::string _msg, ofxUICanvas * _sharedResources);
     
     ~YesNoDialog();
     
@@ -33,6 +34,7 @@ private:
     float x, y, w, h;
     string msg;
     ofxUICanvas * canvas;
+    ofxUICanvas * sharedResources;
     ofxUITextArea * prompt;
     CustomEventLabelButton * yesButton, * noButton;
     

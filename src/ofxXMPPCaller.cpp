@@ -84,7 +84,7 @@ void ofxXMPPCaller::setXMPP(shared_ptr<ofxXMPP> _xmpp){
 
 ofxXMPPCaller::~ofxXMPPCaller() {
     deletes();
-    delete sharedFonts;
+    //delete sharedFonts;
 }
 
 void ofxXMPPCaller::update() {

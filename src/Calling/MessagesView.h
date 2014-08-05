@@ -29,6 +29,7 @@ class MessagesView {
 public:
     
     MessagesView(float _x, float _y, float _w, float _h, SharedStateBundle * _appState, shared_ptr<ofxXMPP> _xmpp);
+    MessagesView(float _x, float _y, float _w, float _h, SharedStateBundle * _appState, shared_ptr<ofxXMPP> _xmpp, ofxUICanvas * _sharedResources);
     ~MessagesView();
     void setModel(Messages * _model);
 
@@ -42,7 +43,7 @@ public:
     ofEvent<string> newLocalMessage;
     
 private:
-    
+    ofxUICanvas * sharedResources;
     SharedStateBundle * appState;
     shared_ptr<ofxXMPP> xmpp;
     Messages * model;

@@ -23,6 +23,25 @@ MessagesView::MessagesView(float _x, float _y, float _w, float _h, SharedStateBu
 , messagesCanvas(NULL)
 , composingCanvas(NULL)
 , composingMsg(NULL)
+, sharedResources(NULL)
+//, callButton(NULL)
+//, callButtonCanvas(NULL)
+{
+    canvas_h = h * CONVERSATION_PERCENT_HEIGHT/100.0 - title_h;
+}
+MessagesView::MessagesView(float _x, float _y, float _w, float _h, SharedStateBundle * _appState, shared_ptr<ofxXMPP> _xmpp, ofxUICanvas*_sharedResources)
+: x(_x)
+, y(_y)
+, w(_w)
+, h(_h)
+, title_h(30.0)
+, appState(_appState)
+, xmpp(_xmpp)
+, sharedResources(_sharedResources)
+//, call_button_label("Call")
+, messagesCanvas(NULL)
+, composingCanvas(NULL)
+, composingMsg(NULL)
 //, callButton(NULL)
 //, callButtonCanvas(NULL)
 {
@@ -36,9 +55,10 @@ MessagesView::~MessagesView() {
     if (composingMsg)
         ofRemoveListener(composingMsg->inputSubmitted, this, &MessagesView::onNewLocalMessage);
      
-    
-    delete messagesCanvas;
-    delete composingCanvas;
+    if(messagesCanvas)
+        delete messagesCanvas;
+    if(composingCanvas)
+        delete composingCanvas;
     //delete callButtonCanvas;
 }
 
@@ -67,7 +87,12 @@ void MessagesView::setup() {
         }
     }
     */
-    messagesCanvas = new dynamicListVerticalScrollbarCanvas(x, y + title_h, w, canvas_h);
+    if(sharedResources)
+        messagesCanvas = new dynamicListVerticalScrollbarCanvas(x, y + title_h, w, canvas_h, sharedResources);
+    else{
+        messagesCanvas = new dynamicListVerticalScrollbarCanvas(x, y + title_h, w, canvas_h);
+        messagesCanvas->setFont("GUI/NewMediaFett.ttf");
+    }
     //messagesCanvas = new dynamicListVerticalScrollbarCanvas(310, 20 , w, canvas_h);
     //messagesCanvas->setDrawOutline(true);
     messagesCanvas->getScrollbar()->setImage("GUI/scrollbar.png");
@@ -77,7 +102,7 @@ void MessagesView::setup() {
     //testing
     cout<<messagesCanvas->getWidgetList()->size();
     
-    composingCanvas = new ofxUICanvas(x, y + title_h + canvas_h, w, h - title_h - canvas_h);
+    composingCanvas = new ofxUICanvas(x, y + title_h + canvas_h, w, h - title_h - canvas_h, sharedResources);
     float margin = OFX_UI_GLOBAL_PADDING + OFX_UI_GLOBAL_WIDGET_SPACING;
     composingMsg = new multiLineTextInput("composing", "", w - 2.0 * margin + 4.0, h - title_h - canvas_h - 2.0 * margin + 4.0, margin, margin);
     composingCanvas->addWidgetDown(composingMsg);

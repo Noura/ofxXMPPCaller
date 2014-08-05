@@ -36,6 +36,7 @@ public:
     void setScrollbarMinHeight(float h);
     void showScrollbar();
     void hideScrollbar();
+    void setFont(string path);
     
     void setListPadding(float padding);
     
