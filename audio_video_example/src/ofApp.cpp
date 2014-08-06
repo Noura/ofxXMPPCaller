@@ -1,7 +1,6 @@
 #include "ofApp.h"
 #include "ofxNice.h"
 #include "ofxGStreamer.h"
-
 //#define BUNDLED
 //--------------------------------------------------------------
 void ofApp::setup(){
@@ -23,13 +22,6 @@ void ofApp::setup(){
     
     sharedResources = new ofxUICanvas(0,0,0,0);
     sharedResources->setFont("GUI/NewMediaFett.ttf");
-    
-    //ofSetLogLevel(ofxGstRTPServer::LOG_NAME,OF_LOG_VERBOSE);
-	//ofSetLogLevel(ofxGstRTPClient::LOG_NAME,OF_LOG_VERBOSE);
-    //grabber.setDeviceID(1);
-	
-    
-    
 }
 
 void ofApp::setupLoginScreen(){
@@ -75,6 +67,7 @@ void ofApp::setupLogout(){
     ofColor dark(80);
     logoutUI->setColorBack(dark);
 }
+
 void ofApp::logout(bool &e){
     
     delete xmppCaller;
@@ -101,7 +94,6 @@ void ofApp::setupCallButton(){
     float unlaunchX = grabberX + grabberWidth/2-unlaunchW/2;
     float unlaunchY = grabberY+grabberHeight+10;
     
-    // unlaunchCanvas and unlaunchButton will unlaunch or "close" the chat UI
     callButtonUI = new ofxUICanvas(unlaunchX, unlaunchY, unlaunchW, unlaunchH, sharedResources);
     
     callButton = new CustomEventLabelButton("Start Call", unlaunchW - 2.0 * margin, unlaunchH - 2.0 * margin, 0, 0, OFX_UI_FONT_SMALL);
@@ -147,20 +139,50 @@ void ofApp::onCallReceived(string & from){
 	callingState = ReceivingCall;
 }
 
+void ofApp::setupEndCallButton(){
+    float unlaunchW = 75;
+    float unlaunchH = 40;
+    float margin = 3;
+    float unlaunchX = ofGetWidth() - unlaunchW;
+    float unlaunchY = 0;
+    
+    endCallUI = new ofxUICanvas(unlaunchX, unlaunchY, unlaunchW, unlaunchH, sharedResources);
+    endCallButton = new CustomEventLabelButton("End Call", unlaunchW - 2.0 * margin, unlaunchH - 2.0 * margin, 0, 0, OFX_UI_FONT_SMALL);
+    endCallUI->addWidget(endCallButton);
+    
+    ofAddListener(endCallButton->mousePressed, this, &ofApp::endCall);
+    
+    ofColor dark(80);
+    endCallUI->setColorBack(dark);
+}
+void ofApp::endCall(bool &e){
+    ofxXMPPTerminateReason reason = ofxXMPPTerminateSuccess;
+    rtp.endCall();
+    //do i need to do this?
+    //onCallFinished(reason);
+}
 // will be called when we start a call and the other peer accepts it
 void ofApp::onCallAccepted(string & from){
     
 	if(callingState == Calling){
+        setupEndCallButton();
 		callingState = InCall;
         state = IN_CALL;
         
         grabberX = 1000-grabberWidth;
         grabberY = 700-grabberHeight;
         delete callNotification;
-        uiLock = true;
-        delete xmppCaller;
-        xmppCaller = NULL;
-        uiLock = false;
+        //want to keep trying??
+        while(uiLock){
+            //wait until the lock is released by the other thing
+        }
+        if(!uiLock){
+            uiLock = true;
+            cout<<"deleting xmppCaller";
+            delete xmppCaller;
+            xmppCaller = NULL;
+            uiLock = false;
+        }
 	}
 }
 
@@ -192,6 +214,7 @@ void ofApp::onCallFinished(ofxXMPPTerminateReason & reason){
         calling = -1;
         
         state = CALL_MANAGER;
+        delete endCallUI;
         setupCallManager();
     }
 
@@ -221,7 +244,9 @@ void ofApp::update(){
         }
     }
     else if(!uiLock && state==CALL_MANAGER){
+        uiLock = true;
         xmppCaller->update();
+        uiLock = false;
         if(callingState==ReceivingCall || callingState==Calling){
             unsigned long long now = ofGetElapsedTimeMillis();
             if(now - lastRing>2500){
@@ -241,7 +266,9 @@ void ofApp::draw(){
     if(state==LOGIN_SCREEN)
         loginGUI->draw();
     else if(!uiLock && state == CALL_MANAGER){
+        uiLock = true;
         xmppCaller->draw();
+        uiLock = false;
         //logoutUI->draw();
         if(callingState == Disconnected){
             callButtonUI->draw();
@@ -254,18 +281,11 @@ void ofApp::draw(){
         }
     }
     else if(state == IN_CALL){
-        //TODO Draw remote video
         remoteVideo.draw(0,0, 1000, 700);
-        
+        endCallUI->draw();
     }
     
-    
 	grabber.draw(grabberX,grabberY,grabberWidth,grabberHeight);
-    /*
-     ofSetColor(255);
-     remoteVideo.draw(0,0);
-     grabber.draw(400,300,240,180);
-     */
 }
 
 //--------------------------------------------------------------
@@ -290,15 +310,7 @@ void ofApp::mouseDragged(int x, int y, int button){
 
 //--------------------------------------------------------------
 void ofApp::mousePressed(int x, int y, int button){
-    /*
-     if(calling==-1){
-     ofVec2f mouse(x,y);
-     ofRectangle friendsRect(ofGetWidth()-300,0,300,rtp.getXMPP().getFriends().size()*20);
-     if(friendsRect.inside(mouse)){
-     calling = mouse.y/20;
-     rtp.call(rtp.getXMPP().getFriends()[calling]);
-     }
-     }*/
+
 }
 
 //--------------------------------------------------------------
@@ -353,9 +365,9 @@ bool ofApp::proccessLoginInfo(bool &e){
 void ofApp::setupCallManager(){
     
     state = CALL_MANAGER;
-    delete loginGUI;
+    if(loginGUI)
+        delete loginGUI;
     
-	//ofxNiceEnableDebug();
     shared_ptr<ofxXMPP> xmpp = shared_ptr<ofxXMPP>(new ofxXMPP);
     
     xmpp->setCapabilities("telekinect");
@@ -393,9 +405,10 @@ void ofApp::setupCallManager(){
 void ofApp::onCallingDialogAnswer(bool & _answer) {
     
     /*
-     if(callingState == Calling && _answer){
      //you are calling and you want to end your call
-     cout<<"TRYING TO END CALL";
+
+     if(callingState == Calling && _answer){
+          cout<<"TRYING TO END CALL";
      //rtp.endCall();
      rtp.refuseCall();
      
@@ -416,6 +429,8 @@ void ofApp::onCallingDialogAnswer(bool & _answer) {
         delete callDialog;
         if(_answer){
 			rtp.acceptCall();
+            
+            setupEndCallButton();
 			callingState = InCall;
             state = IN_CALL;
             

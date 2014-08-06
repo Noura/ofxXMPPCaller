@@ -47,10 +47,12 @@ class ofApp : public ofBaseApp{
     void setupLoginScreen();
     void setupLogout();
     
+    void setupEndCallButton();
     void setupCallButton();
     void sendCall(bool&e);
     void onCallingDialogAnswer(bool & _answer);
     void logout(bool&e);
+    void endCall(bool &e);
 		ofxGstXMPPRTP rtp;
 		ofVideoGrabber grabber;
 		ofTexture remoteVideo;
@@ -82,6 +84,9 @@ class ofApp : public ofBaseApp{
     
     ofxUICanvas*callButtonUI;
     CustomEventLabelButton* callButton;
+    
+    ofxUICanvas*endCallUI;
+    CustomEventLabelButton* endCallButton;
     
     ofxXMPPCaller * xmppCaller;
     ofxUICanvas* sharedResources;
