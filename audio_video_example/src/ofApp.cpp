@@ -12,9 +12,9 @@ void ofApp::setup(){
     
     grabber.initGrabber(640,480);
 	remoteVideo.allocate(640,480,GL_RGB);
-    
+    uiLock.lock();
     setupLoginScreen();
-    
+    uiLock.unlock();
     ring.loadSound("ring.wav",false);
 	callingState = Disconnected;
 	calling = -1;
@@ -23,7 +23,7 @@ void ofApp::setup(){
     sharedResources = new ofxUICanvas(0,0,0,0);
     sharedResources->setFont("GUI/NewMediaFett.ttf");
 }
-
+//--------------Setup functions---------------------------------
 void ofApp::setupLoginScreen(){
     state = LOGIN_SCREEN;
     
@@ -49,6 +49,23 @@ void ofApp::setupLoginScreen(){
     ofAddListener(loginGUI->inputSubmitted, this, &ofApp::proccessLoginInfo);
 }
 
+void ofApp::setupCallButton(){
+    float unlaunchW = 75;
+    float unlaunchH = 40;
+    float margin = 3;
+    float unlaunchX = grabberX + grabberWidth/2-unlaunchW/2;
+    float unlaunchY = grabberY+grabberHeight+10;
+    
+    callButtonUI = new ofxUICanvas(unlaunchX, unlaunchY, unlaunchW, unlaunchH, sharedResources);
+    
+    callButton = new CustomEventLabelButton("Start Call", unlaunchW - 2.0 * margin, unlaunchH - 2.0 * margin, 0, 0, OFX_UI_FONT_SMALL);
+    callButtonUI->addWidget(callButton);
+    
+    ofAddListener(callButton->mousePressed, this, &ofApp::sendCall);
+    
+    callButtonUI->setColorBack(ofColor(150));
+}
+
 void ofApp::setupLogout(){
     float unlaunchW = 75;
     float unlaunchH = 40;
@@ -66,6 +83,167 @@ void ofApp::setupLogout(){
     
     ofColor dark(80);
     logoutUI->setColorBack(dark);
+}
+
+void ofApp::setupCallManager(){
+    
+    
+    shared_ptr<ofxXMPP> xmpp = shared_ptr<ofxXMPP>(new ofxXMPP);
+    
+    xmpp->setCapabilities("telekinect");
+    xmpp->setShow(ofxXMPPShowAvailable);
+    
+    rtp.setXMPP(xmpp);
+	rtp.setup(500);
+    //xmpp is connected on xmppCaller->setup();
+	//rtp.getXMPP().connect(server, user, pass);
+    rtp.setStunServer("132.177.123.6");
+	rtp.addSendVideoChannel(640,480,30);
+	rtp.addSendAudioChannel();
+    
+	calling = -1;
+    
+	ofBackground(255);
+    
+	ofAddListener(rtp.callReceived,this,&ofApp::onCallReceived);
+	ofAddListener(rtp.callFinished,this,&ofApp::onCallFinished);
+	ofAddListener(rtp.callAccepted,this,&ofApp::onCallAccepted);
+    
+    ofBackground(ofColor(OFX_UI_COLOR_BACK_ALPHA));
+    //move video to mid right
+    grabberX = 1000-grabberWidth-50;
+    //Chat notification height is 180, notification y = 50
+    grabberY = 50+180+10;
+    
+    
+    xmppCaller = new ofxXMPPCaller(0,0, server, user, pass, "Login", "telekinect", xmpp);
+    xmppCaller->setup();
+    
+    setupCallButton();
+    
+    state = CALL_MANAGER;
+    if(loginGUI){
+        delete loginGUI;
+        loginGUI = NULL;
+    }
+    
+    //setupLogout();
+    
+}
+
+void ofApp::setupEndCallButton(){
+    float unlaunchW = 75;
+    float unlaunchH = 40;
+    float margin = 3;
+    float unlaunchX = ofGetWidth() - unlaunchW;
+    float unlaunchY = 0;
+    
+    endCallUI = new ofxUICanvas(unlaunchX, unlaunchY, unlaunchW, unlaunchH, sharedResources);
+    endCallButton = new CustomEventLabelButton("End Call", unlaunchW - 2.0 * margin, unlaunchH - 2.0 * margin, 0, 0, OFX_UI_FONT_SMALL);
+    endCallUI->addWidget(endCallButton);
+    
+    ofAddListener(endCallButton->mousePressed, this, &ofApp::endCall);
+    
+    ofColor dark(80);
+    endCallUI->setColorBack(dark);
+}
+
+//--------------Event Callbacks---------------------------------
+void ofApp::endCall(bool &e){
+    ofxXMPPTerminateReason reason = ofxXMPPTerminateSuccess;
+    rtp.endCall();
+    //do i need to do this?
+    onCallFinished(reason);
+}
+
+bool ofApp::proccessLoginInfo(bool &e){
+    string u = loginGUI->getUsername();
+    string p = loginGUI->getPassword();
+    
+    if (u.length()<=0) {
+        if (p.length()<=0){
+            uiLock.lock();
+            loginGUI->setWarning("Enter a username and password!");
+            uiLock.unlock();
+        }
+        else{
+            uiLock.lock();
+            loginGUI->setWarning("Enter a username!");
+            uiLock.unlock();
+        }
+        
+        return false;
+    }
+    else if (p.length()<=0){
+        uiLock.lock();
+        loginGUI->setWarning("Enter a password!");
+        uiLock.unlock();
+        return false;
+        
+    }
+    else{
+        user = u+"@gmail.com";
+        pass = p;
+        setupCallManager();
+        return true;
+    }
+    
+}
+
+void ofApp::onCallingDialogAnswer(bool & _answer) {
+    
+    /*
+     //you are calling and you want to end your call
+     
+     if(callingState == Calling && _answer){
+     cout<<"TRYING TO END CALL";
+     //rtp.endCall();
+     rtp.refuseCall();
+     
+     // reset the rtp element to be able to start a new call
+     rtp.setup(200);
+     rtp.setStunServer("132.177.123.6");
+     rtp.addSendVideoChannel(640,480,30);
+     rtp.addSendAudioChannel();
+     
+     // reset the state
+     callingState = Disconnected;
+     calling = -1;
+     state = CALL_MANAGER;
+     }*/
+    if(callingState == ReceivingCall){
+        cout<<"\n\nanswering dialog\n\n";
+        ofRemoveListener(callDialog->answer, this, &ofApp::onCallingDialogAnswer);
+        delete callDialog;
+        if(_answer){
+			rtp.acceptCall();
+            
+			callingState = InCall;
+            state = IN_CALL;
+            
+            uiLock.lock();
+            setupEndCallButton();
+            delete xmppCaller;
+            delete callButtonUI;
+            uiLock.unlock();
+            
+            grabberX = 1000-grabberWidth;
+            grabberY = 700-grabberHeight;
+            
+        }else{
+            //you reject the call
+			rtp.refuseCall();
+            callingState=Disconnected;
+            
+            // reset the rtp element to be able to start a new call
+            rtp.setup(200);
+            rtp.setStunServer("132.177.123.6");
+            rtp.addSendVideoChannel(640,480,30);
+            rtp.addSendAudioChannel();
+        }
+        
+    }
+    
 }
 
 void ofApp::logout(bool &e){
@@ -87,36 +265,23 @@ void ofApp::logout(bool &e){
     setupLoginScreen();
 }
 
-void ofApp::setupCallButton(){
-    float unlaunchW = 75;
-    float unlaunchH = 40;
-    float margin = 3;
-    float unlaunchX = grabberX + grabberWidth/2-unlaunchW/2;
-    float unlaunchY = grabberY+grabberHeight+10;
-    
-    callButtonUI = new ofxUICanvas(unlaunchX, unlaunchY, unlaunchW, unlaunchH, sharedResources);
-    
-    callButton = new CustomEventLabelButton("Start Call", unlaunchW - 2.0 * margin, unlaunchH - 2.0 * margin, 0, 0, OFX_UI_FONT_SMALL);
-    callButtonUI->addWidget(callButton);
-    
-    ofAddListener(callButton->mousePressed, this, &ofApp::sendCall);
-    
-    callButtonUI->setColorBack(ofColor(150));
-}
-
 void ofApp::sendCall(bool &e){
     ofxXMPPUser receiver = xmppCaller->getAppState().chatContact;
     for(int i = 0; i<receiver.capabilities.size();i++){
         if (receiver.capabilities[i]=="telekinect") {
             
             ofRemoveListener(callButton->mousePressed, this, &ofApp::sendCall);
-            delete callButtonUI;
             
-            rtp.call(receiver);
-            callingState = Calling;
+            uiLock.lock();
+            delete callButtonUI;
             string notification = "You are currently calling "+receiver.userName+".";
             callNotification = new ofxUICanvas(700, 700-180-10, 300, 180, sharedResources);
             callNotification->addTextArea("msg", notification);
+            uiLock.unlock();
+            
+            rtp.call(receiver);
+            callingState = Calling;
+            
             /*string dialog = "You are currently calling "+receiver.userName+". Would you like to stop the call?";
              callDialog = new YesNoDialog(700, 700-180-10, 300, 180, dialog, sharedResources);
              callDialog->setup();
@@ -132,57 +297,35 @@ void ofApp::onCallReceived(string & from){
     string dialog = "You are currently being called by "+callFrom+". Would you like to accept the call?";
     cout<<"\n\n"<<dialog<<"\n\n";
     
+    uiLock.lock();
     callDialog = new YesNoDialog(700, 700-180-10, 300, 180, dialog, sharedResources);
     callDialog->setup();
     ofAddListener(callDialog->answer, this, &ofApp::onCallingDialogAnswer);
+    uiLock.unlock();
     
 	callingState = ReceivingCall;
 }
 
-void ofApp::setupEndCallButton(){
-    float unlaunchW = 75;
-    float unlaunchH = 40;
-    float margin = 3;
-    float unlaunchX = ofGetWidth() - unlaunchW;
-    float unlaunchY = 0;
-    
-    endCallUI = new ofxUICanvas(unlaunchX, unlaunchY, unlaunchW, unlaunchH, sharedResources);
-    endCallButton = new CustomEventLabelButton("End Call", unlaunchW - 2.0 * margin, unlaunchH - 2.0 * margin, 0, 0, OFX_UI_FONT_SMALL);
-    endCallUI->addWidget(endCallButton);
-    
-    ofAddListener(endCallButton->mousePressed, this, &ofApp::endCall);
-    
-    ofColor dark(80);
-    endCallUI->setColorBack(dark);
-}
-void ofApp::endCall(bool &e){
-    ofxXMPPTerminateReason reason = ofxXMPPTerminateSuccess;
-    rtp.endCall();
-    //do i need to do this?
-    //onCallFinished(reason);
-}
 // will be called when we start a call and the other peer accepts it
 void ofApp::onCallAccepted(string & from){
     
 	if(callingState == Calling){
-        setupEndCallButton();
-		callingState = InCall;
-        state = IN_CALL;
         
         grabberX = 1000-grabberWidth;
         grabberY = 700-grabberHeight;
+        
+        uiLock.lock();
+        setupEndCallButton();
         delete callNotification;
-        //want to keep trying??
-        while(uiLock){
-            //wait until the lock is released by the other thing
-        }
-        if(!uiLock){
-            uiLock = true;
-            cout<<"deleting xmppCaller";
-            delete xmppCaller;
-            xmppCaller = NULL;
-            uiLock = false;
-        }
+        cout<<"deleting xmppCaller";
+        delete xmppCaller;
+        cout<<"finished deleting xmppCaller";
+        xmppCaller = NULL;
+        uiLock.unlock();
+        
+        
+        callingState = InCall;
+        state = IN_CALL;
 	}
 }
 
@@ -195,8 +338,12 @@ void ofApp::onCallFinished(ofxXMPPTerminateReason & reason){
 		// if we started a call most likely the other end declined it
 		// or the call failed
 		ofSystemAlertDialog("Call declined");
+        
+        uiLock.lock();
         delete callNotification;
         setupCallButton();
+        uiLock.unlock();
+        
         //reset states
         callingState = Disconnected;
         calling = -1;
@@ -213,22 +360,20 @@ void ofApp::onCallFinished(ofxXMPPTerminateReason & reason){
         callingState = Disconnected;
         calling = -1;
         
-        state = CALL_MANAGER;
+        uiLock.lock();
         delete endCallUI;
         setupCallManager();
+        uiLock.unlock();
+        state = CALL_MANAGER;
     }
-
+    
 }
-
-void ofApp::exit(){
-}
-
 
 //--------------------------------------------------------------
 void ofApp::update(){
     
 	grabber.update();
-    
+    uiLock.lock();
     if(state == LOGIN_SCREEN)
         loginGUI->update();
     else if(state==IN_CALL){
@@ -243,10 +388,9 @@ void ofApp::update(){
             remoteVideo.loadData(rtp.getClient().getPixelsVideo());
         }
     }
-    else if(!uiLock && state==CALL_MANAGER){
-        uiLock = true;
+    else if(state==CALL_MANAGER){
+        
         xmppCaller->update();
-        uiLock = false;
         if(callingState==ReceivingCall || callingState==Calling){
             unsigned long long now = ofGetElapsedTimeMillis();
             if(now - lastRing>2500){
@@ -255,7 +399,7 @@ void ofApp::update(){
             }
         }
     }
-    
+    uiLock.unlock();
     
     
     
@@ -263,12 +407,14 @@ void ofApp::update(){
 
 //--------------------------------------------------------------
 void ofApp::draw(){
+    uiLock.lock();
     if(state==LOGIN_SCREEN)
         loginGUI->draw();
-    else if(!uiLock && state == CALL_MANAGER){
-        uiLock = true;
-        xmppCaller->draw();
-        uiLock = false;
+    else if(state == CALL_MANAGER){
+        if(xmppCaller){
+            xmppCaller->draw();
+            
+        }
         //logoutUI->draw();
         if(callingState == Disconnected){
             callButtonUI->draw();
@@ -283,9 +429,14 @@ void ofApp::draw(){
     else if(state == IN_CALL){
         remoteVideo.draw(0,0, 1000, 700);
         endCallUI->draw();
+        
     }
-    
+    uiLock.unlock();
 	grabber.draw(grabberX,grabberY,grabberWidth,grabberHeight);
+}
+
+//--------------------------------------------------------------
+void ofApp::exit(){
 }
 
 //--------------------------------------------------------------
@@ -310,7 +461,7 @@ void ofApp::mouseDragged(int x, int y, int button){
 
 //--------------------------------------------------------------
 void ofApp::mousePressed(int x, int y, int button){
-
+    
 }
 
 //--------------------------------------------------------------
@@ -333,119 +484,3 @@ void ofApp::dragEvent(ofDragInfo dragInfo){
     
 }
 
-bool ofApp::proccessLoginInfo(bool &e){
-    string u = loginGUI->getUsername();
-    string p = loginGUI->getPassword();
-    
-    if (u.length()<=0) {
-        if (p.length()<=0){
-            
-            loginGUI->setWarning("Enter a username and password!");
-            
-        }
-        else
-            loginGUI->setWarning("Enter a username!");
-        return false;
-    }
-    else if (p.length()<=0){
-        
-        loginGUI->setWarning("Enter a password!");
-        return false;
-        
-    }
-    else{
-        user = u+"@gmail.com";
-        pass = p;
-        setupCallManager();
-        return true;
-    }
-    
-}
-
-void ofApp::setupCallManager(){
-    
-    state = CALL_MANAGER;
-    if(loginGUI)
-        delete loginGUI;
-    
-    shared_ptr<ofxXMPP> xmpp = shared_ptr<ofxXMPP>(new ofxXMPP);
-    
-    xmpp->setCapabilities("telekinect");
-    xmpp->setShow(ofxXMPPShowAvailable);
-    
-    rtp.setXMPP(xmpp);
-	rtp.setup(500);
-	//rtp.getXMPP().connect(server, user, pass);
-    rtp.setStunServer("132.177.123.6");
-	rtp.addSendVideoChannel(640,480,30);
-	rtp.addSendAudioChannel();
-    
-	calling = -1;
-    
-	ofBackground(255);
-    
-	ofAddListener(rtp.callReceived,this,&ofApp::onCallReceived);
-	ofAddListener(rtp.callFinished,this,&ofApp::onCallFinished);
-	ofAddListener(rtp.callAccepted,this,&ofApp::onCallAccepted);
-    
-    ofBackground(ofColor(OFX_UI_COLOR_BACK_ALPHA));
-    //move video to mid right
-    grabberX = 1000-grabberWidth-50;
-    //Chat notification height is 180, notification y = 50
-    grabberY = 50+180+10;
-    
-    xmppCaller = new ofxXMPPCaller(0,0, server, user, pass, "Login", "telekinect", xmpp);
-    xmppCaller->setup();
-    
-    setupCallButton();
-    //setupLogout();
-    
-}
-
-void ofApp::onCallingDialogAnswer(bool & _answer) {
-    
-    /*
-     //you are calling and you want to end your call
-
-     if(callingState == Calling && _answer){
-          cout<<"TRYING TO END CALL";
-     //rtp.endCall();
-     rtp.refuseCall();
-     
-     // reset the rtp element to be able to start a new call
-     rtp.setup(200);
-     rtp.setStunServer("132.177.123.6");
-     rtp.addSendVideoChannel(640,480,30);
-     rtp.addSendAudioChannel();
-     
-     // reset the state
-     callingState = Disconnected;
-     calling = -1;
-     state = CALL_MANAGER;
-     }*/
-    if(callingState == ReceivingCall){
-        cout<<"\n\nanswering dialog\n\n";
-        ofRemoveListener(callDialog->answer, this, &ofApp::onCallingDialogAnswer);
-        delete callDialog;
-        if(_answer){
-			rtp.acceptCall();
-            
-            setupEndCallButton();
-			callingState = InCall;
-            state = IN_CALL;
-            
-            delete xmppCaller;
-            delete callButtonUI;
-            
-            grabberX = 1000-grabberWidth;
-            grabberY = 700-grabberHeight;
-            
-        }else{
-            //you reject the call
-			rtp.refuseCall();
-            callingState=Disconnected;
-        }
-        
-    }
-    
-}

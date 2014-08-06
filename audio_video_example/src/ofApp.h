@@ -78,7 +78,7 @@ class ofApp : public ofBaseApp{
     ofSoundPlayer ring;
     unsigned long long lastRing;
     string callFrom;
-    bool uiLock;
+    ofMutex uiLock;
     YesNoDialog * callDialog;
     ofxUICanvas * callNotification;
     
