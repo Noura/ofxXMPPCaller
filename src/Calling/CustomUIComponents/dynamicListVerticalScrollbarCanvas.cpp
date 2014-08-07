@@ -13,8 +13,10 @@ const float dynamicListVerticalScrollbarCanvas::scrollbarDefaultWidth = 15.0;
 const float dynamicListVerticalScrollbarCanvas::scrollbarDefaultMinHeight = 25.0;
 
 dynamicListVerticalScrollbarCanvas::~dynamicListVerticalScrollbarCanvas() {
+    lock.lock();
     delete scrollbar;
     listItems.clear();
+    lock.unlock();
 }
 
 dynamicListVerticalScrollbarCanvas::dynamicListVerticalScrollbarCanvas(float x, float y, float w, float h, ofxUICanvas * sharedResources)
@@ -58,7 +60,9 @@ dynamicListVerticalScrollbarCanvas::dynamicListVerticalScrollbarCanvas(float x, 
 }
 
 ofxUIWidget* dynamicListVerticalScrollbarCanvas::addWidget(ofxUIWidget * widget, bool reflow) {
+    
     listItems.push_back(widget);
+    
     widget->getRect()->setX(sRect->getX() + OFX_UI_GLOBAL_PADDING);
     ofxUICanvas::addWidget(widget);
     if (reflow) reflowWidgets();
@@ -147,6 +151,7 @@ void dynamicListVerticalScrollbarCanvas::draw() {
     drawOutline();
     drawOutlineHighlight();
 
+    lock.lock();
     for(list<ofxUIWidget*>::iterator it = listItems.begin(); it != listItems.end(); it++) {
         if ((*it)->isVisible() && (*it)->getRect()->rInside(*sRect)) {
             ofxUIWidget * w = (*it);
@@ -156,10 +161,10 @@ void dynamicListVerticalScrollbarCanvas::draw() {
             }
         }
     }
+    lock.unlock();
     if (show_scrollbar) {
         scrollbar->draw();
     }
-
     ofxUIPopStyle();
 }
 
@@ -205,7 +210,9 @@ void dynamicListVerticalScrollbarCanvas::scrollToBottom() {
 }
 
 void dynamicListVerticalScrollbarCanvas::sortWidgets(bool (*f)(const ofxUIWidget *, const ofxUIWidget *)) {
+    lock.lock();
     listItems.sort(f);
+    lock.unlock();
     reflowWidgets();
 }
 

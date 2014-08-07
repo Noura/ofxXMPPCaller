@@ -90,4 +90,6 @@ class ofApp : public ofBaseApp{
     
     ofxXMPPCaller * xmppCaller;
     ofxUICanvas* sharedResources;
+    shared_ptr<ofxXMPP> xmpp;
+    
 };

@@ -63,6 +63,7 @@ protected:
     draggableRect * scrollbar;
     bool show_scrollbar;
     std::list<ofxUIWidget*> listItems;
+    ofMutex lock;
 };
 
 #endif

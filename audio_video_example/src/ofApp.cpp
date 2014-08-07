@@ -22,6 +22,13 @@ void ofApp::setup(){
     
     sharedResources = new ofxUICanvas(0,0,0,0);
     sharedResources->setFont("GUI/NewMediaFett.ttf");
+    
+    xmpp = shared_ptr<ofxXMPP>(new ofxXMPP);
+    
+    xmpp->setCapabilities("telekinect");
+    xmpp->setShow(ofxXMPPShowAvailable);
+    
+    rtp.setXMPP(xmpp);
 }
 //--------------Setup functions---------------------------------
 void ofApp::setupLoginScreen(){
@@ -87,13 +94,6 @@ void ofApp::setupLogout(){
 
 void ofApp::setupCallManager(){
     
-    
-    shared_ptr<ofxXMPP> xmpp = shared_ptr<ofxXMPP>(new ofxXMPP);
-    
-    xmpp->setCapabilities("telekinect");
-    xmpp->setShow(ofxXMPPShowAvailable);
-    
-    rtp.setXMPP(xmpp);
 	rtp.setup(500);
     //xmpp is connected on xmppCaller->setup();
 	//rtp.getXMPP().connect(server, user, pass);
@@ -103,19 +103,19 @@ void ofApp::setupCallManager(){
     
 	calling = -1;
     
-	ofBackground(255);
+	//ofBackground(255);
     
 	ofAddListener(rtp.callReceived,this,&ofApp::onCallReceived);
 	ofAddListener(rtp.callFinished,this,&ofApp::onCallFinished);
 	ofAddListener(rtp.callAccepted,this,&ofApp::onCallAccepted);
     
-    ofBackground(ofColor(OFX_UI_COLOR_BACK_ALPHA));
+    //ofBackground(ofColor(OFX_UI_COLOR_BACK_ALPHA));
     //move video to mid right
     grabberX = 1000-grabberWidth-50;
     //Chat notification height is 180, notification y = 50
     grabberY = 50+180+10;
     
-    
+    cout<<"\n\n"<<user<<" "<<pass<<"\n\n";
     xmppCaller = new ofxXMPPCaller(0,0, server, user, pass, "Login", "telekinect", xmpp);
     xmppCaller->setup();
     
@@ -127,7 +127,7 @@ void ofApp::setupCallManager(){
         loginGUI = NULL;
     }
     
-    //setupLogout();
+    setupLogout();
     
 }
 
@@ -153,7 +153,7 @@ void ofApp::endCall(bool &e){
     ofxXMPPTerminateReason reason = ofxXMPPTerminateSuccess;
     rtp.endCall();
     //do i need to do this?
-    onCallFinished(reason);
+    //onCallFinished(reason);
 }
 
 bool ofApp::proccessLoginInfo(bool &e){
@@ -247,7 +247,7 @@ void ofApp::onCallingDialogAnswer(bool & _answer) {
 }
 
 void ofApp::logout(bool &e){
-    
+    uiLock.lock();
     delete xmppCaller;
     
     ofRemoveListener(logoutButton->mousePressed, this, &ofApp::logout);
@@ -255,6 +255,7 @@ void ofApp::logout(bool &e){
     
     ofRemoveListener(callButton->mousePressed, this, &ofApp::sendCall);
     delete callButtonUI;
+    uiLock.unlock();
     
     ofRemoveListener(rtp.callReceived,this,&ofApp::onCallReceived);
 	ofRemoveListener(rtp.callFinished,this,&ofApp::onCallFinished);
