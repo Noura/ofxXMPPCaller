@@ -31,7 +31,7 @@ FriendsView::~FriendsView() {
 void FriendsView::setup() {
     canvas = new dynamicListVerticalScrollbarCanvas(x, y, w, h - legend_h, sharedFonts);
     canvas->getScrollbar()->setImage("GUI/scrollbar.png");
-    
+    // you shouldn't start out connected to any friends, they will all get added with xmpp->userConnected?
     const vector<ofxXMPPUser> & friends = xmpp->getFriends();
     for (int i = 0; i < friends.size(); i++) {
         ofxXMPPUser user = friends[i];

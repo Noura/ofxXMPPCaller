@@ -81,8 +81,7 @@ void ofApp::setupLogout(){
     float unlaunchY = 0;
     
     // unlaunchCanvas and unlaunchButton will unlaunch or "close" the chat UI
-    logoutUI = new ofxUICanvas(unlaunchX, unlaunchY, unlaunchW, unlaunchH);
-    logoutUI->setFont("GUI/NewMediaFett.ttf");
+    logoutUI = new ofxUICanvas(unlaunchX, unlaunchY, unlaunchW, unlaunchH, sharedResources);
     logoutButton = new CustomEventLabelButton("Logout", unlaunchW - 2.0 * margin, unlaunchH - 2.0 * margin, 0, 0, OFX_UI_FONT_SMALL);
     logoutUI->addWidget(logoutButton);
     
@@ -116,7 +115,7 @@ void ofApp::setupCallManager(){
     grabberY = 50+180+10;
     
     cout<<"\n\n"<<user<<" "<<pass<<"\n\n";
-    xmppCaller = new ofxXMPPCaller(0,0, server, user, pass, "Login", "telekinect", xmpp);
+    xmppCaller = new ofxXMPPCaller(0,0, server, user, pass, "Login", "telekinect", xmpp, sharedResources);
     xmppCaller->setup();
     
     setupCallButton();
@@ -152,8 +151,7 @@ void ofApp::setupEndCallButton(){
 void ofApp::endCall(bool &e){
     ofxXMPPTerminateReason reason = ofxXMPPTerminateSuccess;
     rtp.endCall();
-    //do i need to do this?
-    //onCallFinished(reason);
+    onCallFinished(reason);
 }
 
 bool ofApp::proccessLoginInfo(bool &e){
@@ -224,7 +222,9 @@ void ofApp::onCallingDialogAnswer(bool & _answer) {
             uiLock.lock();
             setupEndCallButton();
             delete xmppCaller;
+            xmppCaller = NULL;
             delete callButtonUI;
+            delete logoutUI;
             uiLock.unlock();
             
             grabberX = 1000-grabberWidth;
@@ -249,6 +249,7 @@ void ofApp::onCallingDialogAnswer(bool & _answer) {
 void ofApp::logout(bool &e){
     uiLock.lock();
     delete xmppCaller;
+    xmppCaller = NULL;
     
     ofRemoveListener(logoutButton->mousePressed, this, &ofApp::logout);
     delete logoutUI;
@@ -320,8 +321,9 @@ void ofApp::onCallAccepted(string & from){
         delete callNotification;
         cout<<"deleting xmppCaller";
         delete xmppCaller;
-        cout<<"finished deleting xmppCaller";
         xmppCaller = NULL;
+        delete logoutUI;
+        cout<<"finished deleting xmppCaller";
         uiLock.unlock();
         
         

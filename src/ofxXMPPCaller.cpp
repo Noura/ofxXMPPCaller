@@ -70,6 +70,22 @@ ofxXMPPCaller::ofxXMPPCaller(float _x, float _y, string server, string user, str
     sharedFonts->setVisible(false);
 }
 
+ofxXMPPCaller::ofxXMPPCaller(float _x, float _y, string server, string user, string password, string _launchButtonLabel, string _capability, shared_ptr<ofxXMPP> _xmpp, ofxUICanvas * _sharedFonts)
+: x(_x)
+, y(_y)
+, launchButtonLabel(_launchButtonLabel)
+, gui(NULL)
+, loginGUI(NULL)
+, unlaunchCanvas(NULL)
+, unlaunchButton(NULL)
+, usingLogin(false)
+, sharedFonts(_sharedFonts){
+    xmpp = _xmpp;
+    appState.setCallCapability(_capability);
+    this->server = server;
+    this->user = user;
+    this->password = password;
+}
 
 void ofxXMPPCaller::setup() {
     if (usingLogin)
@@ -137,8 +153,14 @@ void ofxXMPPCaller::launch(bool & e) {
             ofColor dark(100, 100, 100);
             unlaunchCanvas->setColorBack(dark);
         }
-        if(xmpp->getConnectionState()!=ofxXMPPConnected)
+        if(xmpp->getConnectionState()!=ofxXMPPConnected){
             xmpp->connect(server, user, password);
+        }
+        while(xmpp->getConnectionState()==ofxXMPPConnecting){
+            /*wait for connection to succeed or fail before starting the
+             UI so that we get the right contacts and such
+             */
+        }
         // gui is the chat UI
         gui = new CallingGUI(x, y, &appState, xmpp, sharedFonts);
         gui->setup();

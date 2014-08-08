@@ -14,9 +14,11 @@ const float dynamicListVerticalScrollbarCanvas::scrollbarDefaultMinHeight = 25.0
 
 dynamicListVerticalScrollbarCanvas::~dynamicListVerticalScrollbarCanvas() {
     lock.lock();
-    delete scrollbar;
+    cout<<"\n\n deleting list";
     listItems.clear();
     lock.unlock();
+    cout<<listItems.size();
+    delete scrollbar;
 }
 
 dynamicListVerticalScrollbarCanvas::dynamicListVerticalScrollbarCanvas(float x, float y, float w, float h, ofxUICanvas * sharedResources)
