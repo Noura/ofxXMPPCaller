@@ -126,11 +126,17 @@ void MessagesView::onNewLocalMessage(string &msg) {
 
 void MessagesView::addMessage(ofxXMPPMessage &msg) {
     string text = formatMessage(msg);
-    ofxUITextArea * messageView = new ofxUITextArea(text, text, w -  dynamicListVerticalScrollbarCanvas::scrollbarDefaultWidth - 2.0);
+    //input height = 0 for autosizing height
+    ofxUITextArea * messageView = new ofxUITextArea(text, text, w -  dynamicListVerticalScrollbarCanvas::scrollbarDefaultWidth - 2.0, 0, 5, 5);
+    messageView->getLabelWidget()->setVisible(false);
     messagesCanvas->addWidget(messageView);
     messagesCanvas->scrollToBottom();
-    
-    cout<<messagesCanvas->getWidgetList()->size();
+    //cout<<"\n\n";
+    //ofxUIRectangle * canvasRect = messagesCanvas->getRect();
+    //cout<<canvasRect->getX()<<" "<<canvasRect->getY()<<" "<<canvasRect->getWidth()<<" "<<canvasRect->getHeight()<<"\n";
+    //ofxUIRectangle * rect = messageView->getRect();
+    //cout<<rect->getX()<<" "<<rect->getY()<<" "<<rect->getWidth()<<" "<<rect->getHeight();
+    //cout<<"\n\n";
     
 }
 

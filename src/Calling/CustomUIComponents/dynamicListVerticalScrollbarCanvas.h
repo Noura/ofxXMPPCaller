@@ -37,6 +37,7 @@ public:
     void showScrollbar();
     void hideScrollbar();
     void setFont(string path);
+    virtual ofxUIRectangle * getRect();
     
     void setListPadding(float padding);
     

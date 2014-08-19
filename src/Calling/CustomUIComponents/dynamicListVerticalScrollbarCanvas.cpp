@@ -65,7 +65,7 @@ ofxUIWidget* dynamicListVerticalScrollbarCanvas::addWidget(ofxUIWidget * widget,
     
     listItems.push_back(widget);
     
-    widget->getRect()->setX(sRect->getX() + OFX_UI_GLOBAL_PADDING);
+    //widget->getRect()->setX(sRect->getX() + OFX_UI_GLOBAL_PADDING);
     ofxUICanvas::addWidget(widget);
     if (reflow) reflowWidgets();
 }
@@ -158,8 +158,10 @@ void dynamicListVerticalScrollbarCanvas::draw() {
         if ((*it)->isVisible() && (*it)->getRect()->rInside(*sRect)) {
             ofxUIWidget * w = (*it);
             w->draw();
+            
             for (int i = 0; i < w->getEmbeddedWidgetsSize(); i++) {
-                w->getEmbeddedWidget(i)->draw();
+                if(w->getEmbeddedWidget(i)->isVisible())
+                    w->getEmbeddedWidget(i)->draw();
             }
         }
     }
@@ -202,6 +204,10 @@ void dynamicListVerticalScrollbarCanvas::mouseDragged(int x, int y, int button) 
         float scrollbarY = sRectY + scrollPercent * (sRectH - scrollbar->height);
         scrollbar->y = scrollbarY;
     }
+}
+
+ofxUIRectangle *  dynamicListVerticalScrollbarCanvas::getRect(){
+    return ofxUIScrollableCanvas::getRect();
 }
 
 void dynamicListVerticalScrollbarCanvas::scrollToBottom() {

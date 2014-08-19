@@ -3,6 +3,7 @@
 
 void testApp::setup(){
     /* code when xml contains email/password
+     
     perhaps run try/catch for loading stored settings?
     
     ofXml settings;
@@ -13,7 +14,8 @@ void testApp::setup(){
 	string user = settings.getValue("user");
 	string pwd = settings.getValue("pwd");
     
-    xmppCaller = new ofxXMPPCaller(0, 0, server, user, pwd, "Login", "telekinect");
+    xmppCaller = new ofxXMPPCaller(0, 0, "talk.google.com", "address@gmail.com", "password", "Login", "telekinect");
+    
     */
     xmppCaller = new ofxXMPPCaller(0,0,"Login", "telekinect");
     xmppCaller->setup();
