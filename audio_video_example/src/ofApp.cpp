@@ -1,6 +1,7 @@
 #include "ofApp.h"
 #include "ofxNice.h"
 #include "ofxGStreamer.h"
+
 //#define BUNDLED
 //--------------------------------------------------------------
 void ofApp::setup(){
@@ -268,12 +269,13 @@ void ofApp::logout(bool &e){
 }
 
 void ofApp::sendCall(bool &e){
+    bool success = false;
     ofxXMPPUser receiver = xmppCaller->getAppState().chatContact;
     for(int i = 0; i<receiver.capabilities.size();i++){
         if (receiver.capabilities[i]=="telekinect") {
             
             ofRemoveListener(callButton->mousePressed, this, &ofApp::sendCall);
-            
+            bool success = true;
             uiLock.lock();
             delete callButtonUI;
             string notification = "You are currently calling "+receiver.userName+".";
@@ -290,6 +292,9 @@ void ofApp::sendCall(bool &e){
              ofAddListener(callDialog->answer, this, &ofApp::onCallingDialogAnswer);
              */
         }
+    }
+    if(!success){
+        ofSystemAlertDialog("Your call was not successfully sent. Make sure you selected a person and that they are available to call");
     }
 }
 
@@ -444,7 +449,15 @@ void ofApp::exit(){
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
-    
+    if(state==LOGIN_SCREEN){
+        if(key == OF_KEY_TAB){
+            loginGUI->switchInputs();
+        }
+        if(key==OF_KEY_RETURN){
+            bool temp = true;
+            loginGUI->trigger(temp);
+        }
+    }
 }
 
 //--------------------------------------------------------------

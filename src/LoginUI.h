@@ -30,15 +30,13 @@ public:
     string getUsername();
     string getPassword();
     void setWarning(string warningMsg);
+    void switchInputs();
+    void trigger(bool &e);
     ofEvent<bool> inputSubmitted;
     void setBackgroundColor(ofColor color);
 protected:
     
     float x, y, w, h;
-    
-    
-    //void trigger(ofxUIEventArgs &e);
-    void trigger(bool &e);
     
     ofxUICanvas * loginGUI;
     ofxUICanvas * sharedFonts;

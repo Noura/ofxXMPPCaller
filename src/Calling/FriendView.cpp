@@ -98,7 +98,9 @@ void FriendView::drawLegend(float x, float y, SharedStateBundle * _appState) {
     float labelX = x + 4.0 + 4 * FRIEND_STATE_CIRCLE_RADIUS;
     if (_appState->callCapability.size() > 0) {
         drawCapabilityIcon(iconX, lineY);
-        string desc = "Has capability " + _appState->callCapability;
+        //changing the legend to be something more people will understand instead of telekinect
+        //string desc = "Has capability " + _appState->callCapability;
+        string desc = "Available for call";
         ofDrawBitmapString(desc, labelX, lineY + labelYOffset);
         lineY += lineH;
     }

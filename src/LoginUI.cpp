@@ -38,6 +38,18 @@ void LoginUI::draw(){
     loginGUI->draw();
 }
 
+void LoginUI::switchInputs(){
+    if(usernameInput->isClicked()){
+        usernameInput->unClick();
+        passwordIn->setFocus(true);
+    }
+    else{
+        passwordIn->unClick();
+        usernameInput->setFocus(true);
+    }
+    
+}
+
 void LoginUI::setup(){
     // launchCanvas and launchButton will launch or "open" the chat UI
     if(sharedFonts)
