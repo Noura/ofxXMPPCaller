@@ -46,9 +46,10 @@ class ofApp : public ofBaseApp{
     void setupCallManager();
     void setupLoginScreen();
     void setupLogout();
-    
+    void setupUtilities();
     void setupEndCallButton();
     void setupCallButton();
+    
     void sendCall(bool&e);
     void onCallingDialogAnswer(bool & _answer);
     void logout(bool&e);
@@ -81,6 +82,12 @@ class ofApp : public ofBaseApp{
     ofMutex uiLock;
     YesNoDialog * callDialog;
     ofxUICanvas * callNotification;
+    
+    ofxUICanvas* utilities;
+    ofxUIImageButton* callManagerImage;
+    ofxUIImageButton* helpImage;
+    ofxUIImageButton* sceneMakerImage;
+    ofxUIImageButton* settingsImage;
     
     ofxUICanvas*callButtonUI;
     CustomEventLabelButton* callButton;

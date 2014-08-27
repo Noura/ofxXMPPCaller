@@ -11,18 +11,19 @@ void ofApp::setup(){
     
     server = "talk.google.com";
     
+    sharedResources = new ofxUICanvas(0,0,0,0);
+    sharedResources->setFont("GUI/NewMediaFett.ttf");
+    
     grabber.initGrabber(640,480);
 	remoteVideo.allocate(640,480,GL_RGB);
     uiLock.lock();
+    setupUtilities();
     setupLoginScreen();
     uiLock.unlock();
     ring.loadSound("ring.wav",false);
 	callingState = Disconnected;
 	calling = -1;
 	lastRing = 0;
-    
-    sharedResources = new ofxUICanvas(0,0,0,0);
-    sharedResources->setFont("GUI/NewMediaFett.ttf");
     
     xmpp = shared_ptr<ofxXMPP>(new ofxXMPP);
     
@@ -34,9 +35,10 @@ void ofApp::setup(){
 //--------------Setup functions---------------------------------
 void ofApp::setupLoginScreen(){
     state = LOGIN_SCREEN;
-    
+    utilities->setPosition(ofGetWidth()-utilities->getRect()->getWidth(), 0);
     //set the color to match the loginUI's background
     ofBackground(ofColor(OFX_UI_COLOR_BACK_ALPHA));
+    
     int appWidth = 1000;
     int appHeight =700;
     int loginWidth = 500;
@@ -56,7 +58,21 @@ void ofApp::setupLoginScreen(){
     loginGUI = new LoginUI(loginX, loginY, loginWidth,loginHeight);
     ofAddListener(loginGUI->inputSubmitted, this, &ofApp::proccessLoginInfo);
 }
-
+void ofApp::setupUtilities(){
+    float h = 40;
+    float margin = 4;
+    float w = h*4+7*margin;
+    utilities = new ofxUICanvas(ofGetWidth()-w, 0, w, h+2*margin, sharedResources);
+    callManagerImage = new ofxUIImageButton(h, h, true, "GUI/callManager.png", "CM");
+    helpImage = new ofxUIImageButton(h, h, true, "GUI/help.png", "HELP");
+    sceneMakerImage = new ofxUIImageButton(h, h, true, "GUI/sceneMaker.png", "SM");
+    settingsImage = new ofxUIImageButton(h, h, true, "GUI/settings.png", "SETTINGS");
+    utilities->addWidgetPosition(callManagerImage);
+    utilities->addWidgetEastOf(helpImage, "CM");
+    utilities->addWidgetEastOf(sceneMakerImage, "HELP");
+    utilities->addWidgetEastOf(settingsImage, "SM");
+    
+}
 void ofApp::setupCallButton(){
     float unlaunchW = 75;
     float unlaunchH = 40;
@@ -76,16 +92,16 @@ void ofApp::setupCallButton(){
 
 void ofApp::setupLogout(){
     float unlaunchW = 75;
-    float unlaunchH = 40;
+    float unlaunchH = utilities->getRect()->getHeight();
     float margin = 3;
     float unlaunchX = ofGetWidth() - unlaunchW;
     float unlaunchY = 0;
-    
+    int w = utilities->getRect()->getWidth();
+    utilities->setPosition(ofGetWidth()-75-w, 0);
     // unlaunchCanvas and unlaunchButton will unlaunch or "close" the chat UI
     logoutUI = new ofxUICanvas(unlaunchX, unlaunchY, unlaunchW, unlaunchH, sharedResources);
     logoutButton = new CustomEventLabelButton("Logout", unlaunchW - 2.0 * margin, unlaunchH - 2.0 * margin, 0, 0, OFX_UI_FONT_SMALL);
     logoutUI->addWidget(logoutButton);
-    
     ofAddListener(logoutButton->mousePressed, this, &ofApp::logout);
     
     ofColor dark(80);
@@ -96,26 +112,22 @@ void ofApp::setupCallManager(){
     
 	rtp.setup(500);
     //xmpp is connected on xmppCaller->setup();
-	//rtp.getXMPP().connect(server, user, pass);
     rtp.setStunServer("132.177.123.6");
 	rtp.addSendVideoChannel(640,480,30);
 	rtp.addSendAudioChannel();
     
 	calling = -1;
     
-	//ofBackground(255);
     
 	ofAddListener(rtp.callReceived,this,&ofApp::onCallReceived);
 	ofAddListener(rtp.callFinished,this,&ofApp::onCallFinished);
 	ofAddListener(rtp.callAccepted,this,&ofApp::onCallAccepted);
     
-    //ofBackground(ofColor(OFX_UI_COLOR_BACK_ALPHA));
     //move video to mid right
     grabberX = 1000-grabberWidth-50;
     //Chat notification height is 180, notification y = 50
     grabberY = 50+180+10;
     
-    cout<<"\n\n"<<user<<" "<<pass<<"\n\n";
     xmppCaller = new ofxXMPPCaller(0,0, server, user, pass, "Login", "telekinect", xmpp, sharedResources);
     xmppCaller->setup();
     
@@ -251,7 +263,6 @@ void ofApp::logout(bool &e){
     uiLock.lock();
     delete xmppCaller;
     xmppCaller = NULL;
-    
     ofRemoveListener(logoutButton->mousePressed, this, &ofApp::logout);
     delete logoutUI;
     
@@ -262,7 +273,6 @@ void ofApp::logout(bool &e){
     ofRemoveListener(rtp.callReceived,this,&ofApp::onCallReceived);
 	ofRemoveListener(rtp.callFinished,this,&ofApp::onCallFinished);
 	ofRemoveListener(rtp.callAccepted,this,&ofApp::onCallAccepted);
-    //TODO fix this so that there is only 1 xmpp thread
     rtp.getXMPP().stop();
     
     setupLoginScreen();
@@ -275,7 +285,8 @@ void ofApp::sendCall(bool &e){
         if (receiver.capabilities[i]=="telekinect") {
             
             ofRemoveListener(callButton->mousePressed, this, &ofApp::sendCall);
-            bool success = true;
+            success = true;
+            cout<<"\n\n Successful call"<<success<<"\n\n";
             uiLock.lock();
             delete callButtonUI;
             string notification = "You are currently calling "+receiver.userName+".";
@@ -294,6 +305,7 @@ void ofApp::sendCall(bool &e){
         }
     }
     if(!success){
+        //TODO fix this, it shows up when you successfully call
         ofSystemAlertDialog("Your call was not successfully sent. Make sure you selected a person and that they are available to call");
     }
 }
@@ -324,11 +336,9 @@ void ofApp::onCallAccepted(string & from){
         uiLock.lock();
         setupEndCallButton();
         delete callNotification;
-        cout<<"deleting xmppCaller";
         delete xmppCaller;
         xmppCaller = NULL;
         delete logoutUI;
-        cout<<"finished deleting xmppCaller";
         uiLock.unlock();
         
         
@@ -341,7 +351,6 @@ void ofApp::onCallAccepted(string & from){
 // receives the reason as parameter
 void ofApp::onCallFinished(ofxXMPPTerminateReason & reason){
     
-	cout << "received end call" << endl;
 	if(callingState==Calling){
 		// if we started a call most likely the other end declined it
 		// or the call failed
@@ -423,7 +432,6 @@ void ofApp::draw(){
             xmppCaller->draw();
             
         }
-        //logoutUI->draw();
         if(callingState == Disconnected){
             callButtonUI->draw();
         }
