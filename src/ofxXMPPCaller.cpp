@@ -14,13 +14,14 @@ ofxXMPPCaller::ofxXMPPCaller(float _x, float _y, string server, string user, str
 , loginGUI(NULL)
 , unlaunchCanvas(NULL)
 , unlaunchButton(NULL)
-, usingLogin(false){
+, usingLogin(false)
+, visible(true){
     xmpp = shared_ptr<ofxXMPP>(new ofxXMPP);
     appState.setCallCapability(_capability);
     xmpp->setShow(ofxXMPPShowAvailable);
-     this->server = server;
-     this->user = user;
-     this->password = password;
+    this->server = server;
+    this->user = user;
+    this->password = password;
     xmpp->setCapabilities(appState.callCapability);
     
     sharedFonts = new ofxUICanvas();
@@ -36,7 +37,8 @@ ofxXMPPCaller::ofxXMPPCaller(float _x, float _y, string _launchButtonLabel, stri
 , loginGUI(NULL)
 , unlaunchCanvas(NULL)
 , unlaunchButton(NULL)
-, usingLogin(true){
+, usingLogin(true)
+, visible(true){
     xmpp = shared_ptr<ofxXMPP>(new ofxXMPP);
     appState.setCallCapability(_capability);
     xmpp->setShow(ofxXMPPShowAvailable);
@@ -58,7 +60,8 @@ ofxXMPPCaller::ofxXMPPCaller(float _x, float _y, string server, string user, str
 , loginGUI(NULL)
 , unlaunchCanvas(NULL)
 , unlaunchButton(NULL)
-, usingLogin(false){
+, usingLogin(false)
+, visible(true){
     xmpp = _xmpp;
     appState.setCallCapability(_capability);
     this->server = server;
@@ -79,6 +82,7 @@ ofxXMPPCaller::ofxXMPPCaller(float _x, float _y, string server, string user, str
 , unlaunchCanvas(NULL)
 , unlaunchButton(NULL)
 , usingLogin(false)
+, visible(true)
 , sharedFonts(_sharedFonts){
     xmpp = _xmpp;
     appState.setCallCapability(_capability);
@@ -110,9 +114,11 @@ void ofxXMPPCaller::update() {
 }
 
 void ofxXMPPCaller::draw() {
-    if (gui) gui->draw();
-    if (loginGUI) loginGUI->draw();
-    if (unlaunchCanvas) unlaunchCanvas->draw();
+    if(visible){
+        if (gui) gui->draw();
+        if (loginGUI) loginGUI->draw();
+        if (unlaunchCanvas) unlaunchCanvas->draw();
+    }
 }
 
 /// Sets the UI to the "closed" state, ready to be launched.
@@ -170,6 +176,19 @@ void ofxXMPPCaller::launch(bool & e) {
     
 }
 
+void ofxXMPPCaller::setVisible(bool _visible){
+    visible = _visible;
+    if(loginGUI){
+        loginGUI->setVisible(_visible);
+    }
+    if(gui){
+        gui->setVisible(visible);
+    }
+    if(unlaunchCanvas){
+        unlaunchCanvas->setVisible(_visible);
+    }
+}
+
 void ofxXMPPCaller::deletes() {
     if (loginGUI) {
         ofRemoveListener(loginGUI->inputSubmitted, this, &ofxXMPPCaller::launch);
@@ -215,9 +234,9 @@ bool ofxXMPPCaller::proccessLoginInfo(){
         password = p;
         
         /*xml settings
-        settings->setValue("settings:user", user+"@gmail.com");
-        settings->setValue("settings:pwd", password);
-        settings->saveFile("settings.xml");
+         settings->setValue("settings:user", user+"@gmail.com");
+         settings->setValue("settings:pwd", password);
+         settings->saveFile("settings.xml");
          */
         
         return true;

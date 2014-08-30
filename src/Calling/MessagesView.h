@@ -36,6 +36,7 @@ public:
     void setup();
     void update();
     void draw();
+    void setVisible(bool _visible);
     
     static string formatMessage(ofxXMPPMessage msg);
     void addMessage(ofxXMPPMessage &msg);
@@ -48,6 +49,7 @@ private:
     shared_ptr<ofxXMPP> xmpp;
     Messages * model;
     
+    bool visible;
     float x, y, w, h, canvas_h, title_h;
     string title;
     dynamicListVerticalScrollbarCanvas * messagesCanvas;

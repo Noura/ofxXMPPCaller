@@ -19,7 +19,8 @@ FriendsView::FriendsView(float _x, float _y, float _w, float _h, SharedStateBund
 , appState(_appState)
 , xmpp(_xmpp)
 , sharedFonts(_sharedFonts)
-, canvas(NULL) {
+, canvas(NULL)
+, visible(true){
 }
 
 FriendsView::~FriendsView() {
@@ -109,9 +110,15 @@ void FriendsView::update() {
     canvas->update();
 }
 
+void FriendsView::setVisible(bool _visible){
+    visible = _visible;
+    canvas->setVisible(visible);
+    
+}
+
 void FriendsView::draw() {
-    
-    canvas->draw();
-    
-    FriendView::drawLegend(x + 5.0, y + h - legend_h + 5.0, appState);
+    if(visible){
+        canvas->draw();
+        FriendView::drawLegend(x + 5.0, y + h - legend_h + 5.0, appState);
+    }
 }

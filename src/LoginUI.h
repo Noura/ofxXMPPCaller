@@ -26,7 +26,7 @@ public:
     void setup();
     void update();
     void draw();
-    
+    void setVisible(bool _visible);
     string getUsername();
     string getPassword();
     void setWarning(string warningMsg);
@@ -37,7 +37,7 @@ public:
 protected:
     
     float x, y, w, h;
-    
+    bool visible;
     ofxUICanvas * loginGUI;
     ofxUICanvas * sharedFonts;
     string user, password;

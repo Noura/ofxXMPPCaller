@@ -128,24 +128,22 @@ void ofApp::setupCallManager(){
     //Chat notification height is 180, notification y = 50
     grabberY = 50+180+10;
     
-    xmppCaller = new ofxXMPPCaller(0,0, server, user, pass, "Login", "telekinect", xmpp, sharedResources);
-    xmppCaller->setup();
-    
-    setupCallButton();
-    
     state = CALL_MANAGER;
     if(loginGUI){
-        delete loginGUI;
-        loginGUI = NULL;
+        loginGUI->setVisible(false);
+        ofRemoveListener(loginGUI->inputSubmitted, this, &ofApp::proccessLoginInfo);
     }
     
+    xmppCaller = new ofxXMPPCaller(0,0, server, user, pass, "Login", "telekinect", xmpp, sharedResources);
+    xmppCaller->setup();
+    setupCallButton();
     setupLogout();
     
 }
 
 void ofApp::setupEndCallButton(){
     float unlaunchW = 75;
-    float unlaunchH = 40;
+    float unlaunchH = utilities->getRect()->getHeight();
     float margin = 3;
     float unlaunchX = ofGetWidth() - unlaunchW;
     float unlaunchY = 0;
@@ -195,7 +193,36 @@ bool ofApp::proccessLoginInfo(bool &e){
     else{
         user = u+"@gmail.com";
         pass = p;
-        setupCallManager();
+        if(xmppCaller){
+            xmppCaller->setVisible(true);
+            rtp.setup(500);
+            //xmpp is connected on xmppCaller->setup();
+            rtp.setStunServer("132.177.123.6");
+            rtp.addSendVideoChannel(640,480,30);
+            rtp.addSendAudioChannel();
+            
+            calling = -1;
+            
+            
+            ofAddListener(rtp.callReceived,this,&ofApp::onCallReceived);
+            ofAddListener(rtp.callFinished,this,&ofApp::onCallFinished);
+            ofAddListener(rtp.callAccepted,this,&ofApp::onCallAccepted);
+            
+            //move video to mid right
+            grabberX = 1000-grabberWidth-50;
+            //Chat notification height is 180, notification y = 50
+            grabberY = 50+180+10;
+            
+            state = CALL_MANAGER;
+            if(loginGUI){
+                loginGUI->setVisible(false);
+                ofRemoveListener(loginGUI->inputSubmitted, this, &ofApp::proccessLoginInfo);
+            }
+            
+        }
+        else{
+            setupCallManager();
+        }
         return true;
     }
     
@@ -261,21 +288,22 @@ void ofApp::onCallingDialogAnswer(bool & _answer) {
 
 void ofApp::logout(bool &e){
     uiLock.lock();
-    delete xmppCaller;
-    xmppCaller = NULL;
+    xmppCaller->setVisible(false);
+    ofRemoveListener(rtp.callReceived,this,&ofApp::onCallReceived);
+    ofRemoveListener(rtp.callFinished,this,&ofApp::onCallFinished);
+    ofRemoveListener(rtp.callAccepted,this,&ofApp::onCallAccepted);
+    
     ofRemoveListener(logoutButton->mousePressed, this, &ofApp::logout);
-    delete logoutUI;
+    logoutUI->setVisible(false);
     
     ofRemoveListener(callButton->mousePressed, this, &ofApp::sendCall);
-    delete callButtonUI;
+    callButtonUI->setVisible(false);
     uiLock.unlock();
     
-    ofRemoveListener(rtp.callReceived,this,&ofApp::onCallReceived);
-	ofRemoveListener(rtp.callFinished,this,&ofApp::onCallFinished);
-	ofRemoveListener(rtp.callAccepted,this,&ofApp::onCallAccepted);
     rtp.getXMPP().stop();
     
-    setupLoginScreen();
+    loginGUI->setVisible(true);
+    ofAddListener(loginGUI->inputSubmitted, this, &ofApp::proccessLoginInfo);
 }
 
 void ofApp::sendCall(bool &e){
@@ -364,6 +392,7 @@ void ofApp::onCallFinished(ofxXMPPTerminateReason & reason){
         //reset states
         callingState = Disconnected;
         calling = -1;
+        rtp.endCall();
         // reset the rtp element to be able to start a new call
         rtp.setup(200);
         rtp.setStunServer("132.177.123.6");
@@ -376,6 +405,12 @@ void ofApp::onCallFinished(ofxXMPPTerminateReason & reason){
         //reset states
         callingState = Disconnected;
         calling = -1;
+        
+        // reset the rtp element to be able to start a new call
+        rtp.setup(200);
+        rtp.setStunServer("132.177.123.6");
+        rtp.addSendVideoChannel(640,480,30);
+        rtp.addSendAudioChannel();
         
         uiLock.lock();
         delete endCallUI;

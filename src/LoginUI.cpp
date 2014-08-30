@@ -13,7 +13,8 @@ LoginUI::LoginUI(float _x, float _y, float _w, float _h, ofxUICanvas * _sharedFo
 , y(_y)
 , w(_w)
 , h(_h)
-, sharedFonts(_sharedFonts){
+, sharedFonts(_sharedFonts)
+, visible(true) {
     setup();
 }
 
@@ -22,7 +23,8 @@ LoginUI::LoginUI(float _x, float _y, float _w, float _h)
 , y(_y)
 , w(_w)
 , h(_h)
-, sharedFonts(NULL){
+, sharedFonts(NULL)
+, visible(true) {
     setup();
 }
 
@@ -35,7 +37,8 @@ void LoginUI::update(){
     loginGUI->update();
 }
 void LoginUI::draw(){
-    loginGUI->draw();
+    if (visible)
+        loginGUI->draw();
 }
 
 void LoginUI::switchInputs(){
@@ -49,7 +52,10 @@ void LoginUI::switchInputs(){
     }
     
 }
-
+void LoginUI::setVisible(bool _visible){
+    visible = _visible;
+    loginGUI->setVisible(_visible);
+}
 void LoginUI::setup(){
     // launchCanvas and launchButton will launch or "open" the chat UI
     if(sharedFonts)

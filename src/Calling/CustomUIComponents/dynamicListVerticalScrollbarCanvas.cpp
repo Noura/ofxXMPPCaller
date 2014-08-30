@@ -89,6 +89,16 @@ void dynamicListVerticalScrollbarCanvas::reflowWidgets() {
     setContentHeight(y);
 }
 
+void dynamicListVerticalScrollbarCanvas::setVisible(bool _visible){
+    visible = _visible;
+    ofxUIScrollableCanvas::setVisible(visible);
+    for (list<ofxUIWidget*>::iterator it = listItems.begin(); it != listItems.end(); it++) {
+        ofxUIWidget *w = (*it);
+        w->setVisible(visible);
+    }
+    
+}
+
 void dynamicListVerticalScrollbarCanvas::setContentHeight(float _contentHeight) {
     contentHeight = _contentHeight;
     float sRectH = sRect->getHeight();

@@ -44,6 +44,7 @@ public:
     void draw();
     void mousePressed(int x, int y, int button);
     void mouseReleased(int x, int y, int button);
+    void setVisible(bool _visible);
     // Dragging on the scrollbar will scroll using the scrollbar
     // Dragging on the canvas will scroll according to the way the underlying
     // ofxUIScrollableCanvas scrolls
@@ -65,6 +66,7 @@ protected:
     bool show_scrollbar;
     std::list<ofxUIWidget*> listItems;
     ofMutex lock;
+    bool visible;
 };
 
 #endif

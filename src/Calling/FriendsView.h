@@ -31,11 +31,13 @@ public:
     void setup();
     void update();
     void draw();
+    void setVisible(bool _visible);
 
 private:
     
     SharedStateBundle * appState;
     shared_ptr<ofxXMPP> xmpp;
+    bool visible;
     
     float x, y, w, h, legend_h;
     float scroll_w = 30;

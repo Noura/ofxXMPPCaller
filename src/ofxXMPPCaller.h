@@ -51,6 +51,7 @@ public:
     void draw();
     void launch(bool & e);
     void unlaunch(bool & e);
+    void setVisible(bool _visible);
     
     void setXMPP(shared_ptr<ofxXMPP> _xmpp);
     
@@ -66,7 +67,7 @@ protected:
     void deletes();
     
     float x, y;
-
+    bool visible;
     CallingGUI * gui;
     LoginUI *loginGUI;
     ofxUICanvas * unlaunchCanvas;

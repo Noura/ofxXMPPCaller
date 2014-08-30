@@ -29,7 +29,7 @@ public:
     void setup();
     void update();
     void draw();
-    
+    void setVisible(bool _visible);
     void onChatContactChange(ofxXMPPUser & _user);
     void onNewRemoteMessage(ofxXMPPMessage & _msg);
     void onCallingDialogAnswer(bool & _answer);
@@ -39,7 +39,7 @@ public:
 protected:
     
     float x, y;
-    
+    bool visible;
     SharedStateBundle * appState;
     shared_ptr<ofxXMPP>xmpp;
 

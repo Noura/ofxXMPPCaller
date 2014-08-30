@@ -16,7 +16,8 @@ CallingGUI::CallingGUI(float _x, float _y, SharedStateBundle * _appState, shared
 , friendsView(NULL)
 , messages(NULL)
 , messagesView(NULL)
-, callingDialog(NULL) {
+, callingDialog(NULL)
+, visible(true) {
 }
 
 CallingGUI::~CallingGUI() {
@@ -47,8 +48,15 @@ void CallingGUI::update() {
         }
     }
 }
-
+void CallingGUI::setVisible(bool _visible){
+    visible = _visible;
+    friendsView->setVisible(_visible);
+    if(messagesView)
+        messagesView->setVisible(_visible);
+    
+}
 void CallingGUI::draw() {
+    if(visible){
     // borders
     ofPushStyle();
     ofSetColor(100, 100, 100);
@@ -63,24 +71,13 @@ void CallingGUI::draw() {
     // content
     friendsView->draw();
     if (messagesView) messagesView->draw();
-    if (callingDialog) callingDialog->draw();
+        if (callingDialog) callingDialog->draw();
+    }
 }
 
 void CallingGUI::onChatContactChange(ofxXMPPUser & _user) {
     delete messagesView;
     delete messages;
-    /*
-    cout<<"\n\n";
-    ofxXMPPUser user = appState->chatContact;
-    cout<<FriendView::formatUserName(user.userName);
-    for (int i = 0; i < user.capabilities.size(); i++) {
-        if (user.capabilities[i] == appState->callCapability) {
-            cout<<"has capability";
-            //TODO give off an event here?
-        }
-    }
-    cout<<"\n\n";
-    */
     messages = new Messages(appState, xmpp);
     messagesView = new MessagesView(x + CALLING_GUI_FRIENDS_WIDTH + 2.0 * CALLING_GUI_BORDER_WIDTH, y + CALLING_GUI_BORDER_WIDTH, CALLING_GUI_MESSAGES_WIDTH, ofGetHeight() - 2.0 * CALLING_GUI_BORDER_WIDTH, appState, xmpp, sharedFonts);
     messages->setView(messagesView);
