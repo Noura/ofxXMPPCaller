@@ -71,7 +71,7 @@ class ofApp : public ofBaseApp{
         MissingSettings,
         Calling,
         ReceivingCall,
-        InCall,
+        InCall, 
         Disconnected
     }callingState;
     

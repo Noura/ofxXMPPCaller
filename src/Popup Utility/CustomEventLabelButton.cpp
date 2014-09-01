@@ -25,3 +25,8 @@ void CustomEventLabelButton::onMousePressed(ofMouseEventArgs &e) {
 }
 
 void CustomEventLabelButton::triggerEvent() { }
+
+void CustomEventLabelButton::setVisible(bool _visible){
+    visible = _visible;
+    ofxUILabelButton::setVisible(visible);
+}

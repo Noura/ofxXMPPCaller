@@ -28,7 +28,9 @@ public:
     
     void onMousePressed(ofMouseEventArgs & e);
     ofEvent<bool> mousePressed; // the bool value will always be true, this event is just saying the button got clicked
-    
+    void setVisible(bool _visible);
+private:
+    bool visible;
 };
 
 #endif /* defined(CUSTOM_EVENT_LABEL_BUTTON_H_) */

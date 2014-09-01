@@ -213,11 +213,18 @@ bool ofApp::proccessLoginInfo(bool &e){
             //Chat notification height is 180, notification y = 50
             grabberY = 50+180+10;
             
+            callButtonUI->setVisible(true);
+            ofAddListener(callButton->mousePressed, this, &ofApp::sendCall);
             state = CALL_MANAGER;
             if(loginGUI){
                 loginGUI->setVisible(false);
                 ofRemoveListener(loginGUI->inputSubmitted, this, &ofApp::proccessLoginInfo);
             }
+            if(logoutUI){
+                logoutUI->setVisible(true);
+                ofAddListener(logoutButton->mousePressed, this, &ofApp::logout);
+            }
+            utilities->setPosition(ofGetWidth()-75-utilities->getRect()->getWidth(), 0);
             
         }
         else{
@@ -260,11 +267,14 @@ void ofApp::onCallingDialogAnswer(bool & _answer) {
             state = IN_CALL;
             
             uiLock.lock();
-            setupEndCallButton();
-            delete xmppCaller;
-            xmppCaller = NULL;
-            delete callButtonUI;
-            delete logoutUI;
+            if(endCallUI){
+                endCallUI->setVisible(true);
+            }
+            else
+                setupEndCallButton();
+            xmppCaller->setVisible(false);
+            callButtonUI->setVisible(false);
+            logoutUI->setVisible(false);
             uiLock.unlock();
             
             grabberX = 1000-grabberWidth;
@@ -298,9 +308,18 @@ void ofApp::logout(bool &e){
     
     ofRemoveListener(callButton->mousePressed, this, &ofApp::sendCall);
     callButtonUI->setVisible(false);
-    uiLock.unlock();
     
-    rtp.getXMPP().stop();
+    //recenter video
+    grabberWidth = 240;
+    grabberHeight = 180;
+    int totalHeight = grabberHeight+180;
+    grabberX = ofGetWidth()/2-grabberWidth/2;
+    grabberY = ofGetHeight()/2-totalHeight/2;
+    
+    utilities->setPosition(ofGetWidth()-utilities->getRect()->getWidth(), 0);
+    uiLock.unlock();
+    if(rtp.getXMPP().getConnectionState()!=ofxXMPPDisconnected)
+        rtp.getXMPP().stop();
     
     loginGUI->setVisible(true);
     ofAddListener(loginGUI->inputSubmitted, this, &ofApp::proccessLoginInfo);
@@ -316,7 +335,7 @@ void ofApp::sendCall(bool &e){
             success = true;
             cout<<"\n\n Successful call"<<success<<"\n\n";
             uiLock.lock();
-            delete callButtonUI;
+            callButtonUI->setVisible(false);
             string notification = "You are currently calling "+receiver.userName+".";
             callNotification = new ofxUICanvas(700, 700-180-10, 300, 180, sharedResources);
             callNotification->addTextArea("msg", notification);
@@ -364,9 +383,8 @@ void ofApp::onCallAccepted(string & from){
         uiLock.lock();
         setupEndCallButton();
         delete callNotification;
-        delete xmppCaller;
-        xmppCaller = NULL;
-        delete logoutUI;
+        xmppCaller->setVisible(false);
+        logoutUI->setVisible(false);
         uiLock.unlock();
         
         
@@ -386,7 +404,7 @@ void ofApp::onCallFinished(ofxXMPPTerminateReason & reason){
         
         uiLock.lock();
         delete callNotification;
-        setupCallButton();
+        callButtonUI->setVisible(true);
         uiLock.unlock();
         
         //reset states
@@ -413,8 +431,12 @@ void ofApp::onCallFinished(ofxXMPPTerminateReason & reason){
         rtp.addSendAudioChannel();
         
         uiLock.lock();
-        delete endCallUI;
-        setupCallManager();
+        endCallUI->setVisible(false);
+        if(xmppCaller){
+            xmppCaller->setVisible(true);
+        }
+        else
+            setupCallManager();
         uiLock.unlock();
         state = CALL_MANAGER;
     }

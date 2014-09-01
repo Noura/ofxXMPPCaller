@@ -24,6 +24,7 @@ MessagesView::MessagesView(float _x, float _y, float _w, float _h, SharedStateBu
 , composingCanvas(NULL)
 , composingMsg(NULL)
 , sharedResources(NULL)
+, visible(true)
 //, callButton(NULL)
 //, callButtonCanvas(NULL)
 {
@@ -42,6 +43,7 @@ MessagesView::MessagesView(float _x, float _y, float _w, float _h, SharedStateBu
 , messagesCanvas(NULL)
 , composingCanvas(NULL)
 , composingMsg(NULL)
+, visible(true)
 //, callButton(NULL)
 //, callButtonCanvas(NULL)
 {
