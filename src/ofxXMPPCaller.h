@@ -61,7 +61,7 @@ public:
     
     SharedStateBundle appState;
     shared_ptr<ofxXMPP> xmpp;
-    
+    void deleteMessagesFriends();
 protected:
     bool proccessLoginInfo();
     void deletes();

@@ -177,6 +177,7 @@ void MessagesView::draw() {
 }
 
 void MessagesView::update() {
-    messagesCanvas->update();
+    if(messagesCanvas)
+        messagesCanvas->update();
     //composingCanvas->update();
 }

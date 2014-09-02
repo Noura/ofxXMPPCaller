@@ -98,7 +98,7 @@ void ofApp::setupLogout(){
     float unlaunchY = 0;
     int w = utilities->getRect()->getWidth();
     utilities->setPosition(ofGetWidth()-75-w, 0);
-    // unlaunchCanvas and unlaunchButton will unlaunch or "close" the chat UI
+    
     logoutUI = new ofxUICanvas(unlaunchX, unlaunchY, unlaunchW, unlaunchH, sharedResources);
     logoutButton = new CustomEventLabelButton("Logout", unlaunchW - 2.0 * margin, unlaunchH - 2.0 * margin, 0, 0, OFX_UI_FONT_SMALL);
     logoutUI->addWidget(logoutButton);
@@ -196,10 +196,14 @@ bool ofApp::proccessLoginInfo(bool &e){
         if(xmppCaller){
             xmppCaller->setVisible(true);
             rtp.setup(500);
-            //xmpp is connected on xmppCaller->setup();
             rtp.setStunServer("132.177.123.6");
             rtp.addSendVideoChannel(640,480,30);
             rtp.addSendAudioChannel();
+            cout<<"\n\n";
+            cout<<user<<pass;
+            cout<<"\n\n";
+            //TO DO try to check that it connects and do a warning
+            xmpp->connect("talk.google.com", user, pass);
             
             calling = -1;
             
@@ -269,11 +273,14 @@ void ofApp::onCallingDialogAnswer(bool & _answer) {
             uiLock.lock();
             if(endCallUI){
                 endCallUI->setVisible(true);
+                ofAddListener(endCallButton->mousePressed, this, &ofApp::endCall);
             }
             else
                 setupEndCallButton();
             xmppCaller->setVisible(false);
             callButtonUI->setVisible(false);
+            ofRemoveListener(callButton->mousePressed, this, &ofApp::sendCall);
+            
             logoutUI->setVisible(false);
             uiLock.unlock();
             
@@ -284,6 +291,8 @@ void ofApp::onCallingDialogAnswer(bool & _answer) {
             //you reject the call
 			rtp.refuseCall();
             callingState=Disconnected;
+            
+            ofAddListener(callButton->mousePressed, this, &ofApp::sendCall);
             
             // reset the rtp element to be able to start a new call
             rtp.setup(200);
@@ -318,11 +327,14 @@ void ofApp::logout(bool &e){
     
     utilities->setPosition(ofGetWidth()-utilities->getRect()->getWidth(), 0);
     uiLock.unlock();
+    
+    xmppCaller->deleteMessagesFriends();
     if(rtp.getXMPP().getConnectionState()!=ofxXMPPDisconnected)
         rtp.getXMPP().stop();
     
     loginGUI->setVisible(true);
     ofAddListener(loginGUI->inputSubmitted, this, &ofApp::proccessLoginInfo);
+    state = LOGIN_SCREEN;
 }
 
 void ofApp::sendCall(bool &e){
@@ -404,13 +416,15 @@ void ofApp::onCallFinished(ofxXMPPTerminateReason & reason){
         
         uiLock.lock();
         delete callNotification;
+        
         callButtonUI->setVisible(true);
+        ofAddListener(callButton->mousePressed, this, &ofApp::sendCall);
+        
         uiLock.unlock();
         
         //reset states
         callingState = Disconnected;
         calling = -1;
-        rtp.endCall();
         // reset the rtp element to be able to start a new call
         rtp.setup(200);
         rtp.setStunServer("132.177.123.6");
@@ -432,6 +446,7 @@ void ofApp::onCallFinished(ofxXMPPTerminateReason & reason){
         
         uiLock.lock();
         endCallUI->setVisible(false);
+        ofAddListener(endCallButton->mousePressed, this, &ofApp::endCall);
         if(xmppCaller){
             xmppCaller->setVisible(true);
         }

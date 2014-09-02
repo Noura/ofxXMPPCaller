@@ -33,7 +33,7 @@ public:
     void onChatContactChange(ofxXMPPUser & _user);
     void onNewRemoteMessage(ofxXMPPMessage & _msg);
     void onCallingDialogAnswer(bool & _answer);
-    
+    void deleteMessagesFriends();
     static bool isSameXMPPUserName(string userName1, string userName2);
     
 protected:

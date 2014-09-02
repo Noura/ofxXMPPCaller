@@ -122,3 +122,11 @@ void FriendsView::draw() {
         FriendView::drawLegend(x + 5.0, y + h - legend_h + 5.0, appState);
     }
 }
+
+void FriendsView::clearFriends(){
+    delete canvas;
+    
+    canvas = new dynamicListVerticalScrollbarCanvas(x, y, w, h - legend_h, sharedFonts);
+    canvas->getScrollbar()->setImage("GUI/scrollbar.png");
+    canvas->setVisible(visible);
+}

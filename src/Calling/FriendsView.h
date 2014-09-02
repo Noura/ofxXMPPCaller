@@ -32,6 +32,7 @@ public:
     void update();
     void draw();
     void setVisible(bool _visible);
+    void clearFriends();
 
 private:
     

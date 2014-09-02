@@ -36,7 +36,19 @@ void Messages::onNewLocalMessage(string & msg) {
     ofxXMPPMessage message;
     message.body = msg.substr();
     message.from = "me";
-    addMessage(message);
-
-    xmpp->sendMessage(appState->chatContact.userName, message.body);
+    
+    vector<ofxXMPPUser> friends = xmpp->getFriends();
+    string to = appState->chatContact.userName;
+    bool connected = false;
+    for(int i = 0; i < friends.size(); i++){
+        if(friends[i].userName==to){
+            connected = true;
+        }
+    }
+    if(connected){
+        xmpp->sendMessage(appState->chatContact.userName, message.body);
+        addMessage(message);
+    }
+    else
+        ofSystemAlertDialog(to+" disconnected, cannot send "+msg+".");
 }

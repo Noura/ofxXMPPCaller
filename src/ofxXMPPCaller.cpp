@@ -243,3 +243,8 @@ bool ofxXMPPCaller::proccessLoginInfo(){
     }
     
 }
+void ofxXMPPCaller::deleteMessagesFriends(){
+    if(gui){
+        gui->deleteMessagesFriends();
+    }
+}

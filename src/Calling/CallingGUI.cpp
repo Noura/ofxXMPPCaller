@@ -153,3 +153,13 @@ void CallingGUI::onCallingDialogAnswer(bool & _answer) {
     delete callingDialog;
     callingDialog = NULL;
 }
+
+void CallingGUI::deleteMessagesFriends(){
+    if(messagesView){
+        delete messagesView;
+        messagesView = NULL;
+    }
+    if(friendsView){
+        friendsView->clearFriends();
+    }
+}
