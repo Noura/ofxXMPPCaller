@@ -55,6 +55,8 @@ private:
     dynamicListVerticalScrollbarCanvas * messagesCanvas;
     //even if i convert this to ofxUICanvas, the message history doesn't display...?
     ofxUICanvas * composingCanvas;
+    ofxUICanvas * chatLabel;
+    ofxUILabel * label;
     multiLineTextInput * composingMsg;
     //ofxUICanvas * callButtonCanvas;
     //ofxUILabelButton * callButton;

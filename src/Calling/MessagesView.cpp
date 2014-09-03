@@ -25,6 +25,7 @@ MessagesView::MessagesView(float _x, float _y, float _w, float _h, SharedStateBu
 , composingMsg(NULL)
 , sharedResources(NULL)
 , visible(true)
+, chatLabel(NULL)
 //, callButton(NULL)
 //, callButtonCanvas(NULL)
 {
@@ -44,6 +45,7 @@ MessagesView::MessagesView(float _x, float _y, float _w, float _h, SharedStateBu
 , composingCanvas(NULL)
 , composingMsg(NULL)
 , visible(true)
+, chatLabel(NULL)
 //, callButton(NULL)
 //, callButtonCanvas(NULL)
 {
@@ -61,6 +63,8 @@ MessagesView::~MessagesView() {
         delete messagesCanvas;
     if(composingCanvas)
         delete composingCanvas;
+    if(chatLabel)
+        delete chatLabel;
     //delete callButtonCanvas;
 }
 
@@ -89,6 +93,15 @@ void MessagesView::setup() {
      }
      }
      */
+    chatLabel = new ofxUICanvas(x, y, w, title_h);
+    chatLabel->setDrawOutline(true);
+    chatLabel->setColorBack(ofColor(255));
+    chatLabel->setColorFill(ofColor(0));
+    cout<<"\n\n";
+    cout<<title;
+    cout<<"\n\n";
+    chatLabel->addLabel("Chat with "+title);
+    
     if(sharedResources)
         messagesCanvas = new dynamicListVerticalScrollbarCanvas(x, y + title_h, w, canvas_h, sharedResources);
     else{
@@ -107,7 +120,8 @@ void MessagesView::setup() {
     //composingCanvas->setColorFill(OFX_UI_COLOR_BACK);
     
     //set the cursor color
-    composingMsg->getLabelWidget()->setColorFillHighlight(ofColor(100,100,100));
+    composingMsg->getLabelWidget()->setColorFillHighlight(ofColor(0));
+    composingMsg->getLabelWidget()->setColorBack(ofColor(0));
     composingCanvas->centerWidgets();
     
     //composingMsg->setFocus(true);
@@ -151,15 +165,14 @@ void MessagesView::setVisible(bool _visible){
         messagesCanvas->setVisible(visible);
     if(composingCanvas)
         composingCanvas->setVisible(visible);
+    if(chatLabel)
+        chatLabel->setVisible(visible);
     
 }
 
 void MessagesView::draw() {
     if(visible){
-        ofPushStyle();
-        ofSetColor(0);
-        ofDrawBitmapString("Chat with " + title, x + 3.0, y + title_h - 3.0);
-        ofPopStyle();
+        chatLabel->draw();
         
         messagesCanvas->draw();
         /*
