@@ -53,15 +53,10 @@ private:
     float x, y, w, h, canvas_h, title_h;
     string title;
     dynamicListVerticalScrollbarCanvas * messagesCanvas;
-    //even if i convert this to ofxUICanvas, the message history doesn't display...?
     ofxUICanvas * composingCanvas;
     ofxUICanvas * chatLabel;
     ofxUILabel * label;
     multiLineTextInput * composingMsg;
-    //ofxUICanvas * callButtonCanvas;
-    //ofxUILabelButton * callButton;
-    
-    //string call_button_label;
 
 };
 

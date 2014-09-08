@@ -19,15 +19,12 @@ MessagesView::MessagesView(float _x, float _y, float _w, float _h, SharedStateBu
 , title_h(30.0)
 , appState(_appState)
 , xmpp(_xmpp)
-//, call_button_label("Call")
 , messagesCanvas(NULL)
 , composingCanvas(NULL)
 , composingMsg(NULL)
 , sharedResources(NULL)
 , visible(true)
 , chatLabel(NULL)
-//, callButton(NULL)
-//, callButtonCanvas(NULL)
 {
     canvas_h = h * CONVERSATION_PERCENT_HEIGHT/100.0 - title_h;
 }
@@ -40,14 +37,11 @@ MessagesView::MessagesView(float _x, float _y, float _w, float _h, SharedStateBu
 , appState(_appState)
 , xmpp(_xmpp)
 , sharedResources(_sharedResources)
-//, call_button_label("Call")
 , messagesCanvas(NULL)
 , composingCanvas(NULL)
 , composingMsg(NULL)
 , visible(true)
 , chatLabel(NULL)
-//, callButton(NULL)
-//, callButtonCanvas(NULL)
 {
     canvas_h = h * CONVERSATION_PERCENT_HEIGHT/100.0 - title_h;
 }
@@ -65,7 +59,6 @@ MessagesView::~MessagesView() {
         delete composingCanvas;
     if(chatLabel)
         delete chatLabel;
-    //delete callButtonCanvas;
 }
 
 void MessagesView::setModel(Messages * _model) {
@@ -77,29 +70,11 @@ void MessagesView::setup() {
     ofxXMPPUser user = appState->chatContact;
     
     title = FriendView::formatUserName(user.userName);
-    /*
-     if (appState->callCapability.size() > 0) {
-     for (int i = 0; i < user.capabilities.size(); i++) {
-     if (user.capabilities[i] == appState->callCapability && !callButton) {
-     cout<<"\n Call Button added";
-     float bX = x + w - 50.0;
-     float bY = y + 3.0;
-     float bW = 50.0;
-     float bH = title_h - 6.0;
-     callButtonCanvas = new ofxUICanvas(bX, bY, bW, bH);
-     callButton = new ofxUILabelButton(call_button_label, false, bW, bH, bX, bY, OFX_UI_FONT_SMALL_SIZE);
-     callButtonCanvas->addWidgetDown(callButton);
-     }
-     }
-     }
-     */
+    
     chatLabel = new ofxUICanvas(x, y, w, title_h);
     chatLabel->setDrawOutline(true);
     chatLabel->setColorBack(ofColor(255));
     chatLabel->setColorFill(ofColor(0));
-    cout<<"\n\n";
-    cout<<title;
-    cout<<"\n\n";
     chatLabel->addLabel("Chat with "+title);
     
     if(sharedResources)
@@ -117,14 +92,15 @@ void MessagesView::setup() {
     float margin = OFX_UI_GLOBAL_PADDING + OFX_UI_GLOBAL_WIDGET_SPACING;
     composingMsg = new multiLineTextInput("composing", "", w - 2.0 * margin + 4.0, h - title_h - canvas_h - 2.0 * margin + 4.0, margin, margin);
     composingCanvas->addWidgetDown(composingMsg);
-    //composingCanvas->setColorFill(OFX_UI_COLOR_BACK);
     
     //set the cursor color
     composingMsg->getLabelWidget()->setColorFillHighlight(ofColor(0));
     composingMsg->getLabelWidget()->setColorBack(ofColor(0));
     composingCanvas->centerWidgets();
-    
-    //composingMsg->setFocus(true);
+    /*TODO
+     add in a setFocus to multiline input later on
+     composingMsg->setFocus(true);
+     */
     
     ofAddListener(composingMsg->inputSubmitted, this, &MessagesView::onNewLocalMessage);
     
@@ -141,13 +117,6 @@ void MessagesView::addMessage(ofxXMPPMessage &msg) {
     messageView->getLabelWidget()->setVisible(false);
     messagesCanvas->addWidget(messageView);
     messagesCanvas->scrollToBottom();
-    //cout<<"\n\n";
-    //ofxUIRectangle * canvasRect = messagesCanvas->getRect();
-    //cout<<canvasRect->getX()<<" "<<canvasRect->getY()<<" "<<canvasRect->getWidth()<<" "<<canvasRect->getHeight()<<"\n";
-    //ofxUIRectangle * rect = messageView->getRect();
-    //cout<<rect->getX()<<" "<<rect->getY()<<" "<<rect->getWidth()<<" "<<rect->getHeight();
-    //cout<<"\n\n";
-    
 }
 
 string MessagesView::formatMessage(ofxXMPPMessage msg) {
@@ -173,24 +142,12 @@ void MessagesView::setVisible(bool _visible){
 void MessagesView::draw() {
     if(visible){
         chatLabel->draw();
-        
         messagesCanvas->draw();
-        /*
-         if (callButton)
-         callButtonCanvas->draw();
-         */
         composingCanvas->draw();
     }
-    /* TODO add back in "composing" display
-     if( calling >= 0 && calling<(int)friends.size()){
-     if(friends[calling].chatState==ofxXMPPChatStateComposing){
-     ofDrawBitmapString(friends[calling].userName + ": ...", ofGetWidth()-280, 20 + i*20 + j*30);
-     }
-     }*/
 }
 
 void MessagesView::update() {
     if(messagesCanvas)
         messagesCanvas->update();
-    //composingCanvas->update();
 }

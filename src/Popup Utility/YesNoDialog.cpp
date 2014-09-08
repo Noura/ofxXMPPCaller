@@ -1,6 +1,7 @@
 /*
  * YesNoDialog.cpp
  *
+ *  This is notification where you can prompt the user to respond yes or no to a message.
  *
  *  Created on: Oct 7, 2013
  *      Author: noura
@@ -68,8 +69,7 @@ void YesNoDialog::setup() {
     yesButton->setColorBack(gray);
     yesButton->setColorFill(white);
     yesButton->setColorOutline(white);
-    //TODO Fix this
-    //error on adding prompt with lineHeight->formatTextString->setParent for textArea->addWidget of canvas?
+    
     canvas->addWidget(prompt);
     canvas->addWidget(noButton);
     canvas->addWidget(yesButton);

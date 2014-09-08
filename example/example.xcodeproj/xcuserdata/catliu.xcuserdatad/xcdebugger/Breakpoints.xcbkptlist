@@ -55,18 +55,5 @@
          landmarkName = "ofxUITextInput::mousePressed(int x, int y, int button)"
          landmarkType = "5">
       </FileBreakpoint>
-      <FileBreakpoint
-         shouldBeEnabled = "No"
-         ignoreCount = "0"
-         continueAfterRunningActions = "No"
-         filePath = "../src/ofxXMPPCaller.cpp"
-         timestampString = "431110661.938181"
-         startingColumnNumber = "9223372036854775807"
-         endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "180"
-         endingLineNumber = "180"
-         landmarkName = "ofxXMPPCaller::setVisible(bool _visible)"
-         landmarkType = "5">
-      </FileBreakpoint>
    </FileBreakpoints>
 </Bucket>

@@ -29,6 +29,7 @@ public:
     void setup();
     void update();
     void draw();
+    void setDisplayCapable(bool _display);
     void setVisible(bool _visible);
     void onChatContactChange(ofxXMPPUser & _user);
     void onNewRemoteMessage(ofxXMPPMessage & _msg);

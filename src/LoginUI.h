@@ -1,6 +1,6 @@
 //
 //  LoginUI.h
-//  example
+//  
 //
 //  Created by Catherine Liu on 7/24/14.
 //

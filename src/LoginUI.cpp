@@ -1,6 +1,9 @@
 //
 //  LoginUI.cpp
-//  example
+//  UI component to handle reading in login information
+//
+//  TODO rewrite to inherit from a canvas and overwrite keyPressed
+//  to switch text input
 //
 //  Created by Catherine Liu on 7/24/14.
 //
@@ -57,7 +60,6 @@ void LoginUI::setVisible(bool _visible){
     loginGUI->setVisible(_visible);
 }
 void LoginUI::setup(){
-    // launchCanvas and launchButton will launch or "open" the chat UI
     if(sharedFonts)
         loginGUI = new ofxUICanvas(x,y,w,h, sharedFonts);
     else
@@ -72,7 +74,6 @@ void LoginUI::setup(){
     
     passwordIn = new passwordInput("passwordInput", password, 240, 16, 0, 0, OFX_UI_FONT_MEDIUM);
     passwordIn->setDrawOutline(true);
-    //passwordIn->setTriggerOnClick(false);
     passwordIn->setTriggerType(OFX_UI_TEXTINPUT_ON_ENTER);
     passwordIn->setAutoClear(false);
     loginGUI->addWidgetEastOf(passwordIn, "passwordLabel");
@@ -81,7 +82,6 @@ void LoginUI::setup(){
         user.erase(user.length()-10, user.length());
     usernameInput = new ofxUITextInput("usernameInput", user, 240, 16, 0, 0, OFX_UI_FONT_MEDIUM);
     loginGUI->addWidgetNorthOf(usernameInput, "passwordInput");
-    //usernameInput->setTriggerOnClick(false);
     usernameInput->setTriggerType(OFX_UI_TEXTINPUT_ON_ENTER);
     usernameInput->setDrawOutline(true);
     usernameInput->setAutoClear(false);
@@ -100,13 +100,8 @@ void LoginUI::setup(){
     
     loginGUI->centerWidgets();
     
-    
-    //trigger for the login button
     ofAddListener(loginButton->mousePressed, this, &LoginUI::trigger);
-    //TODO FIGURE OUT INPUTTRIGGERS
-    
-    //This is for when I tried to get the textinputs to trigger as well as the button
-    //ofAddListener(loginGUI->newGUIEvent, this, &LoginUI::trigger);
+    //TODO Figure out how to trigger login on enter and switch inputs on tab in this class
     
     ofColor dark(100, 100, 100);
     loginGUI->setColorBack(dark);
@@ -124,12 +119,6 @@ string LoginUI::getPassword(){
 string LoginUI::getUsername(){
     return user;
 }
-/*
-void LoginUI::guiEvent(ofxUIEventArgs &e)
-{
-    bool ev = true;
-    trigger(ev);
-}*/
 
 void LoginUI::trigger(bool &e){
     
@@ -141,19 +130,3 @@ void LoginUI::trigger(bool &e){
 void LoginUI::setBackgroundColor(ofColor color){
     loginGUI->setColorBack(color);
 }
-/*
-void LoginUI::trigger(ofxUIEventArgs &e){
-    
-    
-    TODO figure out what's going on with textinput triggers on click, and why they happen
-     even though it's set to textinputonenter only
-     usernameInput->setTriggerOnClick(false);
-     usernameInput->setTriggerType(OFX_UI_TEXTINPUT_ON_ENTER);
-     passwordIn->setTriggerOnClick(false);
-     passwordIn->setTriggerType(OFX_UI_TEXTINPUT_ON_ENTER);
-     
-    password = passwordIn->getTextString();
-    user = usernameInput->getTextString();
-    bool value = true;
-    ofNotifyEvent(inputSubmitted, value, this);
-}*/

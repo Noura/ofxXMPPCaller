@@ -33,13 +33,14 @@ public:
     void draw();
     void setVisible(bool _visible);
     void clearFriends();
+    void setDisplayCapable(bool _display);
 
 private:
     
     SharedStateBundle * appState;
     shared_ptr<ofxXMPP> xmpp;
     bool visible;
-    
+    bool displayCapable;
     float x, y, w, h, legend_h;
     float scroll_w = 30;
     dynamicListVerticalScrollbarCanvas * canvas;

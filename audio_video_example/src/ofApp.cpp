@@ -110,7 +110,7 @@ void ofApp::setupLogout(){
 
 void ofApp::setupCallManager(){
     
-	rtp.setup(500);
+	rtp.setup(50);
     //xmpp is connected on xmppCaller->setup();
     rtp.setStunServer("132.177.123.6");
 	rtp.addSendVideoChannel(640,480,30);
@@ -136,6 +136,7 @@ void ofApp::setupCallManager(){
     
     xmppCaller = new ofxXMPPCaller(0,0, server, user, pass, "Login", "telekinect", xmpp, sharedResources);
     xmppCaller->setup();
+    xmppCaller->setDisplayCapable(true);
     setupCallButton();
     setupLogout();
     
@@ -195,7 +196,7 @@ bool ofApp::proccessLoginInfo(bool &e){
         pass = p;
         if(xmppCaller){
             xmppCaller->setVisible(true);
-            rtp.setup(500);
+            rtp.setup(50);
             rtp.setStunServer("132.177.123.6");
             rtp.addSendVideoChannel(640,480,30);
             rtp.addSendAudioChannel();
@@ -295,7 +296,7 @@ void ofApp::onCallingDialogAnswer(bool & _answer) {
             ofAddListener(callButton->mousePressed, this, &ofApp::sendCall);
             
             // reset the rtp element to be able to start a new call
-            rtp.setup(200);
+            rtp.setup(50);
             rtp.setStunServer("132.177.123.6");
             rtp.addSendVideoChannel(640,480,30);
             rtp.addSendAudioChannel();
@@ -426,7 +427,7 @@ void ofApp::onCallFinished(ofxXMPPTerminateReason & reason){
         callingState = Disconnected;
         calling = -1;
         // reset the rtp element to be able to start a new call
-        rtp.setup(200);
+        rtp.setup(50);
         rtp.setStunServer("132.177.123.6");
         rtp.addSendVideoChannel(640,480,30);
         rtp.addSendAudioChannel();
@@ -439,7 +440,7 @@ void ofApp::onCallFinished(ofxXMPPTerminateReason & reason){
         calling = -1;
         
         // reset the rtp element to be able to start a new call
-        rtp.setup(200);
+        rtp.setup(50);
         rtp.setStunServer("132.177.123.6");
         rtp.addSendVideoChannel(640,480,30);
         rtp.addSendAudioChannel();

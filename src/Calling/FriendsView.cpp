@@ -20,7 +20,8 @@ FriendsView::FriendsView(float _x, float _y, float _w, float _h, SharedStateBund
 , xmpp(_xmpp)
 , sharedFonts(_sharedFonts)
 , canvas(NULL)
-, visible(true){
+, visible(true)
+, displayCapable(false){
 }
 
 FriendsView::~FriendsView() {
@@ -32,7 +33,6 @@ FriendsView::~FriendsView() {
 void FriendsView::setup() {
     canvas = new dynamicListVerticalScrollbarCanvas(x, y, w, h - legend_h, sharedFonts);
     canvas->getScrollbar()->setImage("GUI/scrollbar.png");
-    // you shouldn't start out connected to any friends, they will all get added with xmpp->userConnected?
     const vector<ofxXMPPUser> & friends = xmpp->getFriends();
     for (int i = 0; i < friends.size(); i++) {
         ofxXMPPUser user = friends[i];
@@ -47,9 +47,29 @@ void FriendsView::setup() {
 
 void FriendsView::addFriendView(ofxXMPPUser & user) {
     // this callback runs on the XMPP thread
-    xmpp->lock();
-    to_add.push_back(user);
-    xmpp->unlock();
+    
+    if(displayCapable)
+    {
+        //only add the user if they have the correct capability
+        for (int i = 0; i < user.capabilities.size(); i++)
+        {
+            if (user.capabilities[i] == appState->callCapability)
+            {
+                xmpp->lock();
+                to_add.push_back(user);
+                xmpp->unlock();
+            }
+        }
+    }
+    else{
+        xmpp->lock();
+        to_add.push_back(user);
+        xmpp->unlock();
+    }
+}
+
+void FriendsView::setDisplayCapable(bool _display){
+    displayCapable = _display;
 }
 
 void FriendsView::removeFriendView(ofxXMPPUser & user) {

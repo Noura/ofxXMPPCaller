@@ -2,7 +2,7 @@
 #include <assert.h>
 
 void testApp::setup(){
-    /* code when xml contains email/password
+    /* code when an xml file contains email/password
      
     perhaps run try/catch for loading stored settings?
     
@@ -15,8 +15,9 @@ void testApp::setup(){
 	string pwd = settings.getValue("pwd");
     
     xmppCaller = new ofxXMPPCaller(0, 0, "talk.google.com", "address@gmail.com", "password", "Login", "telekinect");
-    
     */
+    
+    //this constructor defaults to giving a login screen for the user
     xmppCaller = new ofxXMPPCaller(0,0,"Login", "telekinect");
     xmppCaller->setup();
 }

@@ -6,6 +6,7 @@
 
 #include "ofxXMPPCaller.h"
 
+//this constructor is passed in the login directly and connects the xmpp without using a login screen
 ofxXMPPCaller::ofxXMPPCaller(float _x, float _y, string server, string user, string password, string _launchButtonLabel, string _capability)
 : x(_x)
 , y(_y)
@@ -29,6 +30,7 @@ ofxXMPPCaller::ofxXMPPCaller(float _x, float _y, string server, string user, str
     sharedFonts->setVisible(false);
 }
 
+//this constructor starts out with a login screen to get the user information, defaulting to gmail as the server
 ofxXMPPCaller::ofxXMPPCaller(float _x, float _y, string _launchButtonLabel, string _capability)
 : x(_x)
 , y(_y)
@@ -52,6 +54,10 @@ ofxXMPPCaller::ofxXMPPCaller(float _x, float _y, string _launchButtonLabel, stri
     sharedFonts->setVisible(false);
 }
 
+/* this constructor is given the server/user/pass info and takes in a xmpp connection
+ * this is useful when you are already running an xmpp connection and don't want to start
+ * multiple connections
+ */
 ofxXMPPCaller::ofxXMPPCaller(float _x, float _y, string server, string user, string password, string _launchButtonLabel, string _capability, shared_ptr<ofxXMPP> _xmpp)
 : x(_x)
 , y(_y)
@@ -91,6 +97,7 @@ ofxXMPPCaller::ofxXMPPCaller(float _x, float _y, string server, string user, str
     this->password = password;
 }
 
+//either starts the login process or the chat/friends list
 void ofxXMPPCaller::setup() {
     if (usingLogin)
         unlaunch(usingLogin);
@@ -104,7 +111,6 @@ void ofxXMPPCaller::setXMPP(shared_ptr<ofxXMPP> _xmpp){
 
 ofxXMPPCaller::~ofxXMPPCaller() {
     deletes();
-    //delete sharedFonts;
 }
 
 void ofxXMPPCaller::update() {
@@ -121,7 +127,7 @@ void ofxXMPPCaller::draw() {
     }
 }
 
-/// Sets the UI to the "closed" state, ready to be launched.
+/// Sets the UI to the "closed" state, ready to be launched with the login screen.
 /// The dummy argument is so that this function can be triggered as an event callback.
 void ofxXMPPCaller::unlaunch(bool & e) {
     if(usingLogin){
@@ -167,9 +173,10 @@ void ofxXMPPCaller::launch(bool & e) {
              UI so that we get the right contacts and such
              */
         }
-        // gui is the chat UI
+        // gui is the chat UI and friends list
         gui = new CallingGUI(x, y, &appState, xmpp, sharedFonts);
         gui->setup();
+        gui->setDisplayCapable(displayCapable);
     }
     
     
@@ -233,16 +240,19 @@ bool ofxXMPPCaller::proccessLoginInfo(){
         user = u+"@gmail.com";
         password = p;
         
-        /*xml settings
-         settings->setValue("settings:user", user+"@gmail.com");
-         settings->setValue("settings:pwd", password);
-         settings->saveFile("settings.xml");
-         */
-        
         return true;
     }
     
 }
+
+void ofxXMPPCaller::setDisplayCapable(bool _display){
+    displayCapable = _display;
+    if(gui)
+        gui->setDisplayCapable(displayCapable);
+}
+
+//used to clear the messages/friends lists when you change the xmpp connection details without deleting
+//the xmppCaller object.
 void ofxXMPPCaller::deleteMessagesFriends(){
     if(gui){
         gui->deleteMessagesFriends();

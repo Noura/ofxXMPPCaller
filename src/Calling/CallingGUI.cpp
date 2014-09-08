@@ -55,6 +55,11 @@ void CallingGUI::setVisible(bool _visible){
         messagesView->setVisible(_visible);
     
 }
+
+void CallingGUI::setDisplayCapable(bool _display) {
+    friendsView->setDisplayCapable(_display);
+}
+
 void CallingGUI::draw() {
     if(visible){
     // borders
