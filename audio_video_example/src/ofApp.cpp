@@ -447,7 +447,7 @@ void ofApp::onCallFinished(ofxXMPPTerminateReason & reason){
         
         uiLock.lock();
         endCallUI->setVisible(false);
-        ofAddListener(endCallButton->mousePressed, this, &ofApp::endCall);
+        ofRemoveListener(endCallButton->mousePressed, this, &ofApp::endCall);
         if(xmppCaller){
             xmppCaller->setVisible(true);
         }
