@@ -173,10 +173,14 @@ void ofxXMPPCaller::launch(bool & e) {
              UI so that we get the right contacts and such
              */
         }
+        if(xmpp->getConnectionState()!=ofxXMPPConnected){
+            //todo give off an event
+        }else{
         // gui is the chat UI and friends list
         gui = new CallingGUI(x, y, &appState, xmpp, sharedFonts);
         gui->setup();
         gui->setDisplayCapable(displayCapable);
+        }
     }
     
     

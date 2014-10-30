@@ -136,7 +136,7 @@ void ofApp::setupCallManager(){
     
     xmppCaller = new ofxXMPPCaller(0,0, server, user, pass, "Login", "telekinect", xmpp, sharedResources);
     xmppCaller->setup();
-    xmppCaller->setDisplayCapable(true);
+    xmppCaller->setDisplayCapable(false);
     setupCallButton();
     setupLogout();
     
@@ -469,6 +469,7 @@ void ofApp::update(){
     else if(state==IN_CALL){
         
         //send your new frame
+        //modify this for different video sources
         if(grabber.isFrameNew()){
             rtp.getServer().newFrame(grabber.getPixelsRef());
         }

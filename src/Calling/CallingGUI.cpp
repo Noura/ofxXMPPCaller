@@ -101,19 +101,22 @@ void CallingGUI::onNewRemoteMessage(ofxXMPPMessage & _msg) {
             callingDialog = NULL;
         }
         string dialog = "";
-        
         int index = _msg.from.find("/");
-        dialog += _msg.from.substr(0, index);
+        if(index>33){
+            dialog = _msg.from.substr(0,33)+" "+_msg.from.substr(33, index);
+        }else{
+            dialog = _msg.from.substr(0,index);
+        }
         dialog += " says \'";
+        
+        //if message is too long to display
         if(_msg.body.length()>200){
-            cout<<"super long message"<<"\n\n\n";
             dialog+=_msg.body.substr(0, 200)+"...\'. ";
         }
         else{
             dialog+=_msg.body+"\'. ";
         }
         dialog+="Do you want to switch to a conversation with them?";
-        //dialog += " just messaged you. Do you want to switch to a conversation with them?";
         
         callingDialog = new YesNoDialog(700, 50, 300, 180, dialog);
         callingDialog->setup();
